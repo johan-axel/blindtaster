@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../models/wine.dart';
 
 class WineCard extends StatefulWidget {
   final Wine wine;
+  final VoidCallback onChanged;
 
-  const WineCard({super.key, required this.wine});
+  const WineCard({
+    super.key,
+    required this.wine,
+    required this.onChanged,
+  });
 
   @override
   State<WineCard> createState() => _WineCardState();
 }
 
 class _WineCardState extends State<WineCard> {
+  Timer? _debounceTimer;
+
+  void _onFieldChanged() {
+    // Cancel the previous timer if it exists
+    _debounceTimer?.cancel();
+    // Start a new timer
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      widget.onChanged();
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -57,7 +79,10 @@ class _WineCardState extends State<WineCard> {
                       labelText: 'Wine Name',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (value) => widget.wine.name = value,
+                    onChanged: (value) {
+                      widget.wine.name = value;
+                      _onFieldChanged();
+                    },
                   ),
                 ),
               ],
@@ -69,7 +94,10 @@ class _WineCardState extends State<WineCard> {
                 labelText: 'Color',
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => widget.wine.color = value,
+              onChanged: (value) {
+                widget.wine.color = value;
+                _onFieldChanged();
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -79,7 +107,10 @@ class _WineCardState extends State<WineCard> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
-              onChanged: (value) => widget.wine.smell = value,
+              onChanged: (value) {
+                widget.wine.smell = value;
+                _onFieldChanged();
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -89,7 +120,10 @@ class _WineCardState extends State<WineCard> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
-              onChanged: (value) => widget.wine.taste = value,
+              onChanged: (value) {
+                widget.wine.taste = value;
+                _onFieldChanged();
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -99,7 +133,10 @@ class _WineCardState extends State<WineCard> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
-              onChanged: (value) => widget.wine.aftertaste = value,
+              onChanged: (value) {
+                widget.wine.aftertaste = value;
+                _onFieldChanged();
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -109,16 +146,34 @@ class _WineCardState extends State<WineCard> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
-              onChanged: (value) => widget.wine.comments = value,
+              onChanged: (value) {
+                widget.wine.comments = value;
+                _onFieldChanged();
+              },
             ),
             const SizedBox(height: 24),
             const Text('Characteristics', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildSlider('Acidity', widget.wine.acidity, (value) => setState(() => widget.wine.acidity = value)),
-            _buildSlider('Body', widget.wine.body, (value) => setState(() => widget.wine.body = value)),
-            _buildSlider('Fruit', widget.wine.fruit, (value) => setState(() => widget.wine.fruit = value)),
-            _buildSlider('Sweetness', widget.wine.sweetness, (value) => setState(() => widget.wine.sweetness = value)),
-            _buildSlider('Tannins', widget.wine.tannins, (value) => setState(() => widget.wine.tannins = value)),
+            _buildSlider('Acidity', widget.wine.acidity, (value) {
+              setState(() => widget.wine.acidity = value);
+              _onFieldChanged();
+            }),
+            _buildSlider('Body', widget.wine.body, (value) {
+              setState(() => widget.wine.body = value);
+              _onFieldChanged();
+            }),
+            _buildSlider('Fruit', widget.wine.fruit, (value) {
+              setState(() => widget.wine.fruit = value);
+              _onFieldChanged();
+            }),
+            _buildSlider('Sweetness', widget.wine.sweetness, (value) {
+              setState(() => widget.wine.sweetness = value);
+              _onFieldChanged();
+            }),
+            _buildSlider('Tannins', widget.wine.tannins, (value) {
+              setState(() => widget.wine.tannins = value);
+              _onFieldChanged();
+            }),
             const SizedBox(height: 24),
             const Text('Overall Rating', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Row(
@@ -130,7 +185,10 @@ class _WineCardState extends State<WineCard> {
                     max: 5.0,
                     divisions: 8,
                     label: widget.wine.rating.toStringAsFixed(1),
-                    onChanged: (value) => setState(() => widget.wine.rating = value),
+                    onChanged: (value) {
+                      setState(() => widget.wine.rating = value);
+                      _onFieldChanged();
+                    },
                   ),
                 ),
                 SizedBox(

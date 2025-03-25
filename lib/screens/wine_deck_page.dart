@@ -3,6 +3,7 @@ import '../models/tasting_session.dart';
 import '../models/wine.dart';
 import '../widgets/wine_card.dart';
 import '../screens/tasting_summary.dart';
+import '../services/storage_service.dart';
 
 class WineDeckPage extends StatefulWidget {
   final TastingSession session;
@@ -14,6 +15,18 @@ class WineDeckPage extends StatefulWidget {
 }
 
 class _WineDeckPageState extends State<WineDeckPage> {
+  Future<void> _saveTastingSession() async {
+    try {
+      await StorageService.saveTastingSession(widget.session);
+    } catch (e) {
+      // Show error message if save fails
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save: $e')),
+        );
+      }
+    }
+  }
   List<Wine> get _wines => widget.session.wines;
   final PageController _pageController = PageController();
 
@@ -81,7 +94,10 @@ class _WineDeckPageState extends State<WineDeckPage> {
                   controller: _pageController,
                   itemCount: _wines.length,
                   itemBuilder: (context, index) {
-                    return WineCard(wine: _wines[index]);
+                    return WineCard(
+                      wine: _wines[index],
+                      onChanged: _saveTastingSession,
+                    );
                   },
                 ),
               ),
@@ -102,7 +118,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => TastingSummary(
-                    initialSession: widget.session,
+                    initialTasting: widget.session,
                   ),
                 ),
               );
@@ -125,6 +141,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
           setState(() {
             // Add new wine with next number in sequence
             widget.session.wines.add(Wine(wineNumber: _wines.length + 1));
+            _saveTastingSession();
           });
           // Wait for the next frame when the PageView is built
           WidgetsBinding.instance.addPostFrameCallback((_) {
