@@ -40,18 +40,14 @@ class _WineCardState extends State<WineCard> {
                     ],
                   ),
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.all(4),
-                  child: Builder(builder: (context) {
-                    print('Wine number: ${widget.wine.wineNumber}');
-                    return Text(
-                      '#${widget.wine.wineNumber}',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    );
-                  }),
+                  child: Text(
+                    '#${widget.wine.wineNumber}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
