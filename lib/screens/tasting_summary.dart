@@ -62,10 +62,9 @@ class _TastingSummaryState extends State<TastingSummary> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Saved Tastings Section
-            if (_savedTastings.isNotEmpty) ...[              
+            if (_savedTastings.isNotEmpty) ...[
               const Text(
                 'Saved Tastings',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -151,47 +150,49 @@ class _TastingSummaryState extends State<TastingSummary> {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            try {
-                              final tasting = Tasting(
-                                name: _nameController.text,
-                                date: _dateController.text,
-                                details: _detailsController.text,
-                                wines: _selectedTasting?.wines ?? [], // Keep existing wines if available
-                              );
-                              // Save the tasting
-                              await StorageService.saveTasting(tasting);
-                              
-                              if (mounted) {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => WineDeckPage(tasting: tasting),
-                                  ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                final tasting = Tasting(
+                                  name: _nameController.text,
+                                  id: _selectedTasting?.id ?? _savedTastings.length + 1,
+                                  date: _dateController.text,
+                                  details: _detailsController.text,
+                                  wines: _selectedTasting?.wines ?? [], // Keep existing wines if available
+                                );
+                                // Save the tasting
+                                await StorageService.saveTasting(tasting);
+                                print('Tasting saved: $tasting.id');
+
+                                if (mounted) {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => WineDeckPage(tasting: tasting),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Failed to save: $e')),
                                 );
                               }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Failed to save: $e')),
-                              );
                             }
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty)
-                                ? 'Back to Wines'
-                                : 'Create Tasting',
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty)
+                                  ? 'View wines'
+                                  : 'Create tasting',
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
         ),
       ),
     );

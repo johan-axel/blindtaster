@@ -24,8 +24,8 @@ class StorageService {
       throw Exception('Storage not initialized');
     }
 
-    // Use the tasting name as the key
-    await _tastingBox!.put(tasting.name, tasting);
+    // Use the tasting id as the key
+    await _tastingBox!.put(tasting.id, tasting);
   }
 
   /// Get all tastings
@@ -37,21 +37,21 @@ class StorageService {
     return _tastingBox!.values.toList();
   }
 
-  /// Get a specific tasting by name
-  static Tasting? getTasting(String name) {
+  /// Get a specific tasting by id
+  static Tasting? getTasting(int id) {
     if (_tastingBox == null) {
       throw Exception('Storage not initialized');
     }
 
-    return _tastingBox!.get(name);
+    return _tastingBox!.get(id);
   }
 
   /// Delete a tasting
-  static Future<void> deleteTasting(String name) async {
+  static Future<void> deleteTasting(int id) async {
     if (_tastingBox == null) {
       throw Exception('Storage not initialized');
     }
 
-    await _tastingBox!.delete(name);
+    await _tastingBox!.delete(id);
   }
 }
