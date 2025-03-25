@@ -7,8 +7,9 @@ import '../services/storage_service.dart';
 
 class WineDeckPage extends StatefulWidget {
   final Tasting tasting;
+  int currentCard;
   
-  const WineDeckPage({super.key, required this.tasting});
+  WineDeckPage({super.key, required this.tasting, this.currentCard = 0});
 
   @override
   State<WineDeckPage> createState() => _WineDeckPageState();
@@ -30,14 +31,15 @@ class _WineDeckPageState extends State<WineDeckPage> {
   List<Wine> get _wines => widget.tasting.wines;
   final PageController _pageController = PageController();
 
-  int _currentCard = 0;
-
   @override
   void initState() {
     super.initState();
+    if (widget.currentCard > 0) {
+      _pageController.jumpToPage(widget.currentCard);
+    }
     _pageController.addListener(() {
       setState(() {
-        _currentCard = _pageController.page?.round() ?? 0;
+        widget.currentCard = _pageController.page?.round() ?? 0;
       });
     });
   }
@@ -70,18 +72,18 @@ class _WineDeckPageState extends State<WineDeckPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: _currentCard > 0
-                          ? () => _navigateToCard(_currentCard - 1)
+                      onPressed: widget.currentCard > 0
+                          ? () => _navigateToCard(widget.currentCard - 1)
                           : null,
                       icon: const Icon(Icons.arrow_back),
                     ),
                     Text(
-                      'Wine ${_currentCard + 1} of ${_wines.length}',
+                      'Wine ${widget.currentCard + 1} of ${_wines.length}',
                       style: const TextStyle(fontSize: 16),
                     ),
                     IconButton(
-                      onPressed: _currentCard < _wines.length - 1
-                          ? () => _navigateToCard(_currentCard + 1)
+                      onPressed: widget.currentCard < _wines.length - 1
+                          ? () => _navigateToCard(widget.currentCard + 1)
                           : null,
                       icon: const Icon(Icons.arrow_forward),
                     ),
