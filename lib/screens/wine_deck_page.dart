@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import '../models/tasting_session.dart';
+import '../models/tasting.dart';
 import '../models/wine.dart';
 import '../widgets/wine_card.dart';
 import '../screens/tasting_summary.dart';
 import '../services/storage_service.dart';
 
 class WineDeckPage extends StatefulWidget {
-  final TastingSession session;
+  final Tasting tasting;
   
-  const WineDeckPage({super.key, required this.session});
+  const WineDeckPage({super.key, required this.tasting});
 
   @override
   State<WineDeckPage> createState() => _WineDeckPageState();
 }
 
 class _WineDeckPageState extends State<WineDeckPage> {
-  Future<void> _saveTastingSession() async {
+  Future<void> _saveTasting() async {
     try {
-      await StorageService.saveTastingSession(widget.session);
+      await StorageService.saveTasting(widget.tasting);
     } catch (e) {
       // Show error message if save fails
       if (mounted) {
@@ -27,7 +27,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
       }
     }
   }
-  List<Wine> get _wines => widget.session.wines;
+  List<Wine> get _wines => widget.tasting.wines;
   final PageController _pageController = PageController();
 
   int _currentCard = 0;
@@ -96,7 +96,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
                   itemBuilder: (context, index) {
                     return WineCard(
                       wine: _wines[index],
-                      onChanged: _saveTastingSession,
+                      onChanged: _saveTasting,
                     );
                   },
                 ),
@@ -109,7 +109,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.session.name),
+        title: Text(widget.tasting.name),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
@@ -118,7 +118,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) => TastingSummary(
-                    initialTasting: widget.session,
+                    initialTasting: widget.tasting,
                   ),
                 ),
               );
@@ -140,8 +140,8 @@ class _WineDeckPageState extends State<WineDeckPage> {
         onPressed: () {
           setState(() {
             // Add new wine with next number in sequence
-            widget.session.wines.add(Wine(wineNumber: _wines.length + 1));
-            _saveTastingSession();
+            widget.tasting.wines.add(Wine(wineNumber: _wines.length + 1));
+            _saveTasting();
           });
           // Wait for the next frame when the PageView is built
           WidgetsBinding.instance.addPostFrameCallback((_) {

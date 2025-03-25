@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tasting_session.dart';
+part of 'tasting.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class TastingSessionAdapter extends TypeAdapter<TastingSession> {
+class TastingAdapter extends TypeAdapter<Tasting> {
   @override
   final int typeId = 0;
 
   @override
-  TastingSession read(BinaryReader reader) {
+  Tasting read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return TastingSession(
+    return Tasting(
       name: fields[0] as String,
       date: fields[1] as String,
       details: fields[2] as String,
@@ -25,7 +25,7 @@ class TastingSessionAdapter extends TypeAdapter<TastingSession> {
   }
 
   @override
-  void write(BinaryWriter writer, TastingSession obj) {
+  void write(BinaryWriter writer, Tasting obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)
@@ -44,7 +44,7 @@ class TastingSessionAdapter extends TypeAdapter<TastingSession> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TastingSessionAdapter &&
+      other is TastingAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

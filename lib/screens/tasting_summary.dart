@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/tasting_session.dart';
+import '../models/tasting.dart';
 import '../services/storage_service.dart';
 import 'wine_deck_page.dart';
 
 class TastingSummary extends StatefulWidget {
-  final TastingSession? initialTasting;
+  final Tasting? initialTasting;
 
   const TastingSummary({super.key, this.initialTasting});
 
@@ -13,12 +13,12 @@ class TastingSummary extends StatefulWidget {
 }
 
 class _TastingSummaryState extends State<TastingSummary> {
-  List<TastingSession> _savedTastings = [];
-  TastingSession? _selectedTasting;
+  List<Tasting> _savedTastings = [];
+  Tasting? _selectedTasting;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _loadSavedTastings() async {
-    final tastings = await StorageService.getAllTastingSessions();
+    final tastings = await StorageService.getAllTastings();
     setState(() {
       _savedTastings = tastings;
     });
@@ -64,8 +64,8 @@ class _TastingSummaryState extends State<TastingSummary> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Saved Sessions Section
-            if (_savedSessions.isNotEmpty) ...[              
+            // Saved Tastings Section
+            if (_savedTastings.isNotEmpty) ...[              
               const Text(
                 'Saved Tastings',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -78,18 +78,18 @@ class _TastingSummaryState extends State<TastingSummary> {
                 ),
                 height: 150,
                 child: ListView.builder(
-                  itemCount: _savedSessions.length,
+                  itemCount: _savedTastings.length,
                   itemBuilder: (context, index) {
-                    final session = _savedSessions[index];
+                    final tasting = _savedTastings[index];
                     return ListTile(
-                      title: Text(session.name),
-                      subtitle: Text('${session.date} - ${session.wines.length} wines'),
+                      title: Text(tasting.name),
+                      subtitle: Text('${tasting.date} - ${tasting.wines.length} wines'),
                       onTap: () {
                         setState(() {
-                          _nameController.text = session.name;
-                          _dateController.text = session.date;
-                          _detailsController.text = session.details;
-                          _selectedTasting = session;
+                          _nameController.text = tasting.name;
+                          _dateController.text = tasting.date;
+                          _detailsController.text = tasting.details;
+                          _selectedTasting = tasting;
                         });
                       },
                     );
@@ -154,19 +154,19 @@ class _TastingSummaryState extends State<TastingSummary> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             try {
-                              final session = TastingSession(
+                              final tasting = Tasting(
                                 name: _nameController.text,
                                 date: _dateController.text,
                                 details: _detailsController.text,
                                 wines: _selectedTasting?.wines ?? [], // Keep existing wines if available
                               );
-                              // Save the session
-                              await StorageService.saveTastingSession(session);
+                              // Save the tasting
+                              await StorageService.saveTasting(tasting);
                               
                               if (mounted) {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => WineDeckPage(session: session),
+                                    builder: (context) => WineDeckPage(tasting: tasting),
                                   ),
                                 );
                               }

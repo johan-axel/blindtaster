@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 import 'wine.dart';
 
-part 'tasting_session.g.dart';
+part 'tasting.g.dart';
 
 @HiveType(typeId: 0)
-class TastingSession extends HiveObject {
+class Tasting extends HiveObject {
   @HiveField(0)
   String name;
 
@@ -17,7 +17,7 @@ class TastingSession extends HiveObject {
   @HiveField(3)
   List<Wine> wines;
 
-  TastingSession({
+  Tasting({
     required this.name,
     required this.date,
     required this.details,
