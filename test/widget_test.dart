@@ -44,9 +44,10 @@ void main() {
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Verify validation errors are gone
-      expect(nameField.validator!('Test Tasting'), isNull);
-      expect(dateField.validator!('2025-03-25'), isNull);
+      // Verify we're on the WineDeckPage
+      expect(find.byType(WineDeckPage), findsOneWidget);
+      expect(find.text('Test Tasting'), findsOneWidget); // App bar title
+      expect(find.text('Add your first wine tasting note!'), findsOneWidget); // Empty state message
     });
 
     testWidgets('TastingSummary loads initial session data', (WidgetTester tester) async {
@@ -83,6 +84,41 @@ void main() {
 
       // Verify empty state message
       expect(find.text('Add your first wine tasting note!'), findsOneWidget);
+    });
+
+    testWidgets('WineDeckPage add wine works', (WidgetTester tester) async {
+      final session = TastingSession(
+        name: 'Test Session',
+        date: '2025-03-25',
+        details: 'Test details',
+        wines: [],
+      );
+
+      await tester.pumpWidget(MaterialApp(
+        home: WineDeckPage(session: session),
+      ));
+
+      // Verify empty state
+      expect(find.text('Add your first wine tasting note!'), findsOneWidget);
+      expect(session.wines.length, equals(0));
+
+      // Add a wine
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      // Verify wine was added
+      expect(session.wines.length, equals(1));
+      expect(session.wines[0].wineNumber, equals(1));
+      expect(find.text('Wine 1 of 1'), findsOneWidget);
+
+      // Add another wine
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      // Verify second wine was added
+      expect(session.wines.length, equals(2));
+      expect(session.wines[1].wineNumber, equals(2));
+      expect(find.text('Wine 2 of 2'), findsOneWidget);
     });
 
     testWidgets('WineDeckPage navigation works', (WidgetTester tester) async {
