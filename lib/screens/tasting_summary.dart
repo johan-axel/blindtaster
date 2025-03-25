@@ -13,13 +13,14 @@ class TastingSummary extends StatefulWidget {
 }
 
 class _TastingSummaryState extends State<TastingSummary> {
-  List<TastingSession> _savedSessions = [];
+  List<TastingSession> _savedTastings = [];
   TastingSession? _selectedTasting;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> _loadSavedSessions() async {
+  Future<void> _loadSavedTastings() async {
+    final tastings = await StorageService.getAllTastingSessions();
     setState(() {
-      _savedSessions = StorageService.getAllTastingSessions();
+      _savedTastings = tastings;
     });
   }
   late final TextEditingController _nameController;
@@ -29,7 +30,7 @@ class _TastingSummaryState extends State<TastingSummary> {
   @override
   void initState() {
     super.initState();
-    _loadSavedSessions();
+    _loadSavedTastings();
     _selectedTasting = widget.initialTasting;
     // Initialize controllers with values from initialTasting if available
     _nameController = TextEditingController(
