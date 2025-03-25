@@ -4,27 +4,27 @@ import '../models/wine.dart';
 import '../widgets/wine_card.dart';
 import '../screens/tasting_summary.dart';
 
-class WineListPage extends StatefulWidget {
+class WineDeckPage extends StatefulWidget {
   final TastingSession session;
   
-  const WineListPage({super.key, required this.session});
+  const WineDeckPage({super.key, required this.session});
 
   @override
-  State<WineListPage> createState() => _WineListPageState();
+  State<WineDeckPage> createState() => _WineDeckPageState();
 }
 
-class _WineListPageState extends State<WineListPage> {
+class _WineDeckPageState extends State<WineDeckPage> {
   List<Wine> get _wines => widget.session.wines;
   final PageController _pageController = PageController();
 
-  int _currentPage = 0;
+  int _currentCard = 0;
 
   @override
   void initState() {
     super.initState();
     _pageController.addListener(() {
       setState(() {
-        _currentPage = _pageController.page?.round() ?? 0;
+        _currentCard = _pageController.page?.round() ?? 0;
       });
     });
   }
@@ -35,10 +35,10 @@ class _WineListPageState extends State<WineListPage> {
     super.dispose();
   }
 
-  void _navigateToPage(int page) {
-    if (page >= 0 && page < _wines.length) {
+  void _navigateToCard(int cardIndex) {
+    if (cardIndex >= 0 && cardIndex < _wines.length) {
       _pageController.animateToPage(
-        page,
+        cardIndex,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -57,18 +57,18 @@ class _WineListPageState extends State<WineListPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: _currentPage > 0
-                          ? () => _navigateToPage(_currentPage - 1)
+                      onPressed: _currentCard > 0
+                          ? () => _navigateToCard(_currentCard - 1)
                           : null,
                       icon: const Icon(Icons.arrow_back),
                     ),
                     Text(
-                      'Wine ${_currentPage + 1} of ${_wines.length}',
+                      'Wine ${_currentCard + 1} of ${_wines.length}',
                       style: const TextStyle(fontSize: 16),
                     ),
                     IconButton(
-                      onPressed: _currentPage < _wines.length - 1
-                          ? () => _navigateToPage(_currentPage + 1)
+                      onPressed: _currentCard < _wines.length - 1
+                          ? () => _navigateToCard(_currentCard + 1)
                           : null,
                       icon: const Icon(Icons.arrow_forward),
                     ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/tasting_session.dart';
-import 'wine_list_page.dart';
+import 'wine_deck_page.dart';
 
 class TastingSummary extends StatefulWidget {
   final TastingSession? initialSession;
@@ -103,7 +103,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                     );
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => WineListPage(session: session),
+                        builder: (context) => WineDeckPage(session: session),
                       ),
                     );
                   }
