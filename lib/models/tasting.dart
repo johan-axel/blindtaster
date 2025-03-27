@@ -21,11 +21,19 @@ class Tasting extends HiveObject {
   @HiveField(4)
   List<Wine> wines;
 
+  @HiveField(5)
+  String flight;
+
+  @HiveField(6)
+  int numberOfWines;
+
   Tasting({
     required this.id,
     required this.name,
     required this.date,
     required this.details,
+    this.flight = '',
+    this.numberOfWines = 0,
     List<Wine>? wines,
   }) : wines = wines ?? [];
 }

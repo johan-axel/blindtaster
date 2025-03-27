@@ -138,7 +138,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
           const SizedBox(height: 16),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           setState(() {
             // Add new wine with next number in sequence
@@ -156,7 +156,9 @@ class _WineDeckPageState extends State<WineDeckPage> {
             }
           });
         },
-        child: const Icon(Icons.add),
+        label: const Text('Add Wine'),
+        icon: const Icon(Icons.wine_bar),
+        tooltip: 'Add new wine to tasting',
       ),
     );
   }
