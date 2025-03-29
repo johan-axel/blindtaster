@@ -27,6 +27,27 @@ class Tasting extends HiveObject {
   @HiveField(6)
   int numberOfWines;
 
+  @HiveField(7)
+  String? wineType;
+
+  @HiveField(8)
+  String? grapes;
+
+  @HiveField(9)
+  String? country;
+
+  @HiveField(10)
+  String? region;
+
+  @HiveField(11)
+  String? producer;
+
+  @HiveField(12)
+  String? year;
+
+  @HiveField(13, defaultValue: false)
+  bool isRevealed;
+
   Tasting({
     required this.id,
     required this.name,
@@ -34,6 +55,13 @@ class Tasting extends HiveObject {
     required this.details,
     this.flight = '',
     this.numberOfWines = 0,
+    this.wineType,
+    this.grapes,
+    this.country,
+    this.region,
+    this.producer,
+    this.year,
+    required this.isRevealed,
     List<Wine>? wines,
   }) : wines = wines ?? [];
 }

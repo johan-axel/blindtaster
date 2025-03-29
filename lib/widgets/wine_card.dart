@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/wine.dart';
+import '../models/tasting.dart';
 
 class WineCard extends StatefulWidget {
   final Wine wine;
+  final Tasting tasting;
   final VoidCallback onChanged;
 
   const WineCard({
     super.key,
     required this.wine,
+    required this.tasting,
     required this.onChanged,
   });
 
@@ -33,6 +36,47 @@ class _WineCardState extends State<WineCard> {
     _debounceTimer?.cancel();
     super.dispose();
   }
+  @override
+  Widget _buildWineParameters() {
+    if (!widget.tasting.isRevealed) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Divider(height: 32),
+        const Text(
+          'Wine Information',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        if (widget.wine.wineType != null) ...[          
+          Text('Type: ${widget.wine.wineType}'),
+          const SizedBox(height: 8),
+        ],
+        if (widget.wine.grapes != null) ...[          
+          Text('Grape(s): ${widget.wine.grapes}'),
+          const SizedBox(height: 8),
+        ],
+        if (widget.wine.country != null) ...[          
+          Text('Country: ${widget.wine.country}'),
+          const SizedBox(height: 8),
+        ],
+        if (widget.wine.region != null) ...[          
+          Text('Region: ${widget.wine.region}'),
+          const SizedBox(height: 8),
+        ],
+        if (widget.wine.producer != null) ...[          
+          Text('Producer: ${widget.wine.producer}'),
+          const SizedBox(height: 8),
+        ],
+        if (widget.wine.year != null) ...[          
+          Text('Year: ${widget.wine.year}'),
+          const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -87,6 +131,8 @@ class _WineCardState extends State<WineCard> {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            _buildWineParameters(),
             const SizedBox(height: 16),
             TextFormField(
               initialValue: widget.wine.color,

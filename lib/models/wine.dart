@@ -43,12 +43,36 @@ class Wine extends HiveObject {
   @HiveField(12)
   double rating;
 
+  @HiveField(13)
+  String? wineType;
+
+  @HiveField(14)
+  String? grapes;
+
+  @HiveField(15)
+  String? country;
+
+  @HiveField(16)
+  String? region;
+
+  @HiveField(17)
+  String? producer;
+
+  @HiveField(18)
+  String? year;
+
   Wine({
     required this.wineNumber,
     this.name = '',
     this.color = '',
     this.smell = '',
     this.taste = '',
+    this.wineType,
+    this.grapes,
+    this.country,
+    this.region,
+    this.producer,
+    this.year,
     this.aftertaste = '',
     this.comments = '',
     this.acidity = 0.0,

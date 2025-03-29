@@ -14,6 +14,7 @@ class TastingSummary extends StatefulWidget {
 }
 
 class _TastingSummaryState extends State<TastingSummary> {
+  bool _isWineParametersExpanded = false;
   List<Tasting> _savedTastings = [];
   Tasting? _selectedTasting;
   final _formKey = GlobalKey<FormState>();
@@ -29,6 +30,12 @@ class _TastingSummaryState extends State<TastingSummary> {
   late final TextEditingController _detailsController;
   late final TextEditingController _flightController;
   late final TextEditingController _numberOfWinesController;
+  late final TextEditingController _wineTypeController;
+  late final TextEditingController _grapesController;
+  late final TextEditingController _countryController;
+  late final TextEditingController _regionController;
+  late final TextEditingController _producerController;
+  late final TextEditingController _yearController;
 
   @override
   void initState() {
@@ -51,6 +58,24 @@ class _TastingSummaryState extends State<TastingSummary> {
     _numberOfWinesController = TextEditingController(
       text: widget.initialTasting?.numberOfWines.toString() ?? '0',
     );
+    _wineTypeController = TextEditingController(
+      text: widget.initialTasting?.wineType ?? '',
+    );
+    _grapesController = TextEditingController(
+      text: widget.initialTasting?.grapes ?? '',
+    );
+    _countryController = TextEditingController(
+      text: widget.initialTasting?.country ?? '',
+    );
+    _regionController = TextEditingController(
+      text: widget.initialTasting?.region ?? '',
+    );
+    _producerController = TextEditingController(
+      text: widget.initialTasting?.producer ?? '',
+    );
+    _yearController = TextEditingController(
+      text: widget.initialTasting?.year ?? '',
+    );
   }
 
   @override
@@ -60,6 +85,12 @@ class _TastingSummaryState extends State<TastingSummary> {
     _detailsController.dispose();
     _flightController.dispose();
     _numberOfWinesController.dispose();
+    _wineTypeController.dispose();
+    _grapesController.dispose();
+    _countryController.dispose();
+    _regionController.dispose();
+    _producerController.dispose();
+    _yearController.dispose();
     super.dispose();
   }
 
@@ -71,6 +102,12 @@ class _TastingSummaryState extends State<TastingSummary> {
       _detailsController.clear();
       _flightController.clear();
       _numberOfWinesController.clear();
+      _wineTypeController.clear();
+      _grapesController.clear();
+      _countryController.clear();
+      _regionController.clear();
+      _producerController.clear();
+      _yearController.clear();
     });
   }
 
@@ -147,6 +184,73 @@ class _TastingSummaryState extends State<TastingSummary> {
                         },
                       ),
                       const SizedBox(height: 24),
+                      ExpansionTile(
+                        title: const Text('Set wine parameters'),
+                        initiallyExpanded: _isWineParametersExpanded,
+                        onExpansionChanged: (expanded) {
+                          setState(() {
+                            _isWineParametersExpanded = expanded;
+                          });
+                        },
+                        children: [
+                          TextFormField(
+                            controller: _wineTypeController,
+                            decoration: const InputDecoration(
+                              labelText: 'Type',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., Red, White, Rosé',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _grapesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Grape(s)',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., Cabernet Sauvignon, Merlot',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _countryController,
+                            decoration: const InputDecoration(
+                              labelText: 'Country',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., France, Italy',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _regionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Region',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., Bordeaux, Tuscany',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _producerController,
+                            decoration: const InputDecoration(
+                              labelText: 'Producer',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., Château Margaux',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _yearController,
+                            decoration: const InputDecoration(
+                              labelText: 'Year',
+                              border: OutlineInputBorder(),
+                              hintText: 'e.g., 2018',
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
                       TextFormField(
                         controller: _flightController,
                         decoration: const InputDecoration(
@@ -189,10 +293,18 @@ class _TastingSummaryState extends State<TastingSummary> {
                               try {
                                 int numberOfWines = int.tryParse(_numberOfWinesController.text) ?? 0;
                                 
-                                // Create a list of numbered wines
+                                // Create a list of numbered wines with default parameters
                                 final wines = List<Wine>.generate(
                                   numberOfWines,
-                                  (index) => Wine(wineNumber: index + 1),
+                                  (index) => Wine(
+                                    wineNumber: index + 1,
+                                    wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
+                                    grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
+                                    country: _countryController.text.isEmpty ? null : _countryController.text,
+                                    region: _regionController.text.isEmpty ? null : _regionController.text,
+                                    producer: _producerController.text.isEmpty ? null : _producerController.text,
+                                    year: _yearController.text.isEmpty ? null : _yearController.text,
+                                  ),
                                 );
 
                                 final tasting = Tasting(
@@ -202,7 +314,14 @@ class _TastingSummaryState extends State<TastingSummary> {
                                   details: _detailsController.text,
                                   flight: _flightController.text,
                                   numberOfWines: numberOfWines,
+                                  wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
+                                  grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
+                                  country: _countryController.text.isEmpty ? null : _countryController.text,
+                                  region: _regionController.text.isEmpty ? null : _regionController.text,
+                                  producer: _producerController.text.isEmpty ? null : _producerController.text,
+                                  year: _yearController.text.isEmpty ? null : _yearController.text,
                                   wines: _selectedTasting?.wines ?? wines, // Use existing wines or create new ones
+                                  isRevealed: _selectedTasting?.isRevealed ?? false,
                                 );
 
                                 // Ensure we have the correct number of wines
@@ -217,7 +336,7 @@ class _TastingSummaryState extends State<TastingSummary> {
 
                                 // Save the tasting
                                 await StorageService.saveTasting(tasting);
-                                print('Tasting saved: ${tasting.id} with ${tasting.wines.length} wines');
+                                print('Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
 
                                 if (mounted) {
                                   Navigator.of(context).pushReplacement(

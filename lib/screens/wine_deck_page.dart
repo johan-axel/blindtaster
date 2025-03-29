@@ -98,6 +98,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
                   itemBuilder: (context, index) {
                     return WineCard(
                       wine: _wines[index],
+                      tasting: widget.tasting,
                       onChanged: _saveTasting,
                     );
                   },
@@ -114,6 +115,24 @@ class _WineDeckPageState extends State<WineDeckPage> {
         title: Text(widget.tasting.name),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          Row(
+            children: [
+              const Text('wines are'),
+              const SizedBox(width: 8),
+              Switch(
+                value: widget.tasting.isRevealed,
+                onChanged: (value) async {
+                  setState(() {
+                    widget.tasting.isRevealed = value;
+                  });
+                  await StorageService.saveTasting(widget.tasting);
+                },
+              ),
+              const SizedBox(width: 8),
+              Text(widget.tasting.isRevealed ? 'revealed' : 'blind'),
+              const SizedBox(width: 16),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
@@ -142,7 +161,15 @@ class _WineDeckPageState extends State<WineDeckPage> {
         onPressed: () {
           setState(() {
             // Add new wine with next number in sequence
-            widget.tasting.wines.add(Wine(wineNumber: _wines.length + 1));
+            widget.tasting.wines.add(Wine(
+              wineNumber: _wines.length + 1,
+              wineType: widget.tasting.wineType,
+              grapes: widget.tasting.grapes,
+              country: widget.tasting.country,
+              region: widget.tasting.region,
+              producer: widget.tasting.producer,
+              year: widget.tasting.year,
+            ));
             _saveTasting();
           });
           // Wait for the next frame when the PageView is built
