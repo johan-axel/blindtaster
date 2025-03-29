@@ -49,30 +49,85 @@ class _WineCardState extends State<WineCard> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        if (widget.wine.wineType != null) ...[          
-          Text('Type: ${widget.wine.wineType}'),
-          const SizedBox(height: 8),
-        ],
-        if (widget.wine.grapes != null) ...[          
-          Text('Grape(s): ${widget.wine.grapes}'),
-          const SizedBox(height: 8),
-        ],
-        if (widget.wine.country != null) ...[          
-          Text('Country: ${widget.wine.country}'),
-          const SizedBox(height: 8),
-        ],
-        if (widget.wine.region != null) ...[          
-          Text('Region: ${widget.wine.region}'),
-          const SizedBox(height: 8),
-        ],
-        if (widget.wine.producer != null) ...[          
-          Text('Producer: ${widget.wine.producer}'),
-          const SizedBox(height: 8),
-        ],
-        if (widget.wine.year != null) ...[          
-          Text('Year: ${widget.wine.year}'),
-          const SizedBox(height: 8),
-        ],
+        TextFormField(
+          initialValue: widget.wine.wineType,
+          decoration: const InputDecoration(
+            labelText: 'Type',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., Red, White, Rosé',
+          ),
+          onChanged: (value) {
+            widget.wine.wineType = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.wine.grapes,
+          decoration: const InputDecoration(
+            labelText: 'Grape(s)',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., Cabernet Sauvignon, Merlot',
+          ),
+          onChanged: (value) {
+            widget.wine.grapes = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.wine.country,
+          decoration: const InputDecoration(
+            labelText: 'Country',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., France, Italy',
+          ),
+          onChanged: (value) {
+            widget.wine.country = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.wine.region,
+          decoration: const InputDecoration(
+            labelText: 'Region',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., Bordeaux, Tuscany',
+          ),
+          onChanged: (value) {
+            widget.wine.region = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.wine.producer,
+          decoration: const InputDecoration(
+            labelText: 'Producer',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., Château Margaux',
+          ),
+          onChanged: (value) {
+            widget.wine.producer = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: widget.wine.year,
+          decoration: const InputDecoration(
+            labelText: 'Year',
+            border: OutlineInputBorder(),
+            hintText: 'e.g., 2018',
+          ),
+          keyboardType: TextInputType.number,
+          onChanged: (value) {
+            widget.wine.year = value.isEmpty ? null : value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
       ],
     );
   }

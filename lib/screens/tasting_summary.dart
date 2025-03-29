@@ -413,7 +413,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                     itemBuilder: (context, index) {
                       final wine = _selectedTasting!.wines[index];
                       return ListTile(
-                        title: Text(wine.wineNumber.toString() + ' ' + wine.name),
+                        title: Text('${wine.wineNumber} ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}'),
                         subtitle: Text(wine.rating.toString()),
                         onTap: () {
                           //TODO navigate to wine card
