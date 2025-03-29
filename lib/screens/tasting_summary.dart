@@ -235,11 +235,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty)
-                                  ? 'Go to wine cards'
-                                  : 'Create new tasting',
-                            ),
+                            child: Text('Go to wine cards'),
                           ),
                         ),
                       ],
