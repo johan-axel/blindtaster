@@ -429,6 +429,38 @@ class _TastingSummaryState extends State<TastingSummary> {
                                   '${tasting.date} (${tasting.wines.length}) ${tasting.producer?.padLeft(1, ' - ') ?? ''} ${tasting.country?.padLeft(1, ' - ') ?? ''} ${tasting.region?.padLeft(1, ' - ') ?? ''} ${tasting.year?.padLeft(1, ' - ') ?? ''} ${tasting.wineType?.padLeft(1, ' - ') ?? ''} ${tasting.grapes?.padLeft(1, ' - ') ?? ''}',
                                   style: TextStyle(color: Colors.grey.shade600),
                                 ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete_outline),
+                                  onPressed: () async {
+                                    final confirmed = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete Tasting'),
+                                        content: Text('Are you sure you want to delete "${tasting.name}"?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(false),
+                                            child: const Text('CANCEL'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(true),
+                                            child: const Text('DELETE'),
+                                          ),
+                                        ],
+                                      ),
+                                    ) ?? false;
+
+                                    if (confirmed) {
+                                      await StorageService.deleteTasting(tasting.id);
+                                      setState(() {
+                                        _savedTastings.removeWhere((t) => t.name == tasting.name);
+                                        if (_selectedTasting?.name == tasting.name) {
+                                          _selectedTasting = null;
+                                        }
+                                      });
+                                    }
+                                  },
+                                ),
                                 onTap: () {
                           setState(() {
                             _nameController.text = tasting.name;
