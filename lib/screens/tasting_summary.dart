@@ -372,71 +372,113 @@ class _TastingSummaryState extends State<TastingSummary> {
                 ),
               ),
               if (_savedTastings.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Text(
-                  'Saved Tastings',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 24),
                 Container(
                   decoration: BoxDecoration(
+                    color: Colors.grey,
                     border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  height: 150,
-                  child: ListView.builder(
-                    itemCount: _savedTastings.length,
-                    itemBuilder: (context, index) {
-                      final tasting = _savedTastings[index];
-                      return ListTile(
-                        title: Text(tasting.name),
-                        subtitle: Text('${tasting.flight}: ${tasting.date} - ${tasting.wines.length} wines'),
-                        onTap: () {
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.wine_bar, size: 20),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Saved Tastings',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ListView.builder(
+                          itemCount: _savedTastings.length,
+                          itemBuilder: (context, index) {
+                            final tasting = _savedTastings[index];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                side: BorderSide(color: Colors.grey.shade200),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  '${tasting.name} ${tasting.flight?.padLeft(1, ' ') ?? ''}',
+                                  style: const TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                subtitle: Text(
+                                  '${tasting.date} (${tasting.wines.length}) ${tasting.producer?.padLeft(1, ' - ') ?? ''} ${tasting.country?.padLeft(1, ' - ') ?? ''} ${tasting.region?.padLeft(1, ' - ') ?? ''} ${tasting.year?.padLeft(1, ' - ') ?? ''} ${tasting.wineType?.padLeft(1, ' - ') ?? ''} ${tasting.grapes?.padLeft(1, ' - ') ?? ''}',
+                                  style: TextStyle(color: Colors.grey.shade600),
+                                ),
+                                onTap: () {
                           setState(() {
                             _nameController.text = tasting.name;
                             _dateController.text = tasting.date;
                             _detailsController.text = tasting.details;
                             _selectedTasting = tasting;
-                          });
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-              if (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                const Text(
-                  'Wines',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  height: 150,
-                  child: ListView.builder(
-                    itemCount: _selectedTasting!.wines.length,
-                    itemBuilder: (context, index) {
-                      final wine = _selectedTasting!.wines[index];
-                      return ListTile(
-                        title: Text('${wine.wineNumber} ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}'),
-                        subtitle: Text(wine.rating.toString()),
-                        onTap: () {
-                          //TODO navigate to wine card
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => WineDeckPage(
-                                tasting: _selectedTasting!,
-                                currentCard: wine.wineNumber-1,
+                                  });
+                                },
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                            );
+                          },
+                        ),
+                      ),
+                      if (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        const Text(
+                          'Wines',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 14),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          height: 150,
+                          child: ListView.builder(
+                            itemCount: _selectedTasting!.wines.length,
+                            itemBuilder: (context, index) {
+                              final wine = _selectedTasting!.wines[index];
+                              return ListTile(
+                                title: Text('${wine.wineNumber} [${wine.rating}] ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}'),
+                                onTap: () {
+                                  //TODO navigate to wine card
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => WineDeckPage(
+                                        tasting: _selectedTasting!,
+                                        currentCard: wine.wineNumber-1,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ]
+                    ],
                   ),
                 ),
               ],
