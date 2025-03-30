@@ -264,6 +264,42 @@ class _TastingSummaryState extends State<TastingSummary> {
                         },
                       ),
                       const SizedBox(height: 24),
+                      TextFormField(
+                        controller: _flightController,
+                        decoration: const InputDecoration(
+                          labelText: 'Flight',
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter the flight name or number',
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      TextFormField(
+                        controller: _numberOfWinesController,
+                        decoration: const InputDecoration(
+                          labelText: 'Number of Wines',
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter the number of wines in this tasting',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return null;  // Optional field
+                          }
+                          final number = int.tryParse(value);
+
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _detailsController,
+                        decoration: const InputDecoration(
+                          labelText: 'Details',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 24),
                       ExpansionTile(
                         title: const Text('Set wine parameters'),
                         initiallyExpanded: _isWineParametersExpanded,
@@ -329,42 +365,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                      ),
-                      const SizedBox(height: 24),
-                      TextFormField(
-                        controller: _flightController,
-                        decoration: const InputDecoration(
-                          labelText: 'Flight',
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter the flight name or number',
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      TextFormField(
-                        controller: _numberOfWinesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Number of Wines',
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter the number of wines in this tasting',
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return null;  // Optional field
-                          }
-                          final number = int.tryParse(value);
-
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _detailsController,
-                        decoration: const InputDecoration(
-                          labelText: 'Details',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
                       ),
                       ],
                     ),
