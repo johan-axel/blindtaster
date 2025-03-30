@@ -56,7 +56,7 @@ class _TastingSummaryState extends State<TastingSummary> {
       text: widget.initialTasting?.flight ?? '',
     );
     _numberOfWinesController = TextEditingController(
-      text: widget.initialTasting?.numberOfWines.toString() ?? '0',
+      text: widget.initialTasting?.numberOfWines.toString() ?? '',
     );
     _wineTypeController = TextEditingController(
       text: widget.initialTasting?.wineType ?? '',
@@ -114,20 +114,100 @@ class _TastingSummaryState extends State<TastingSummary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _clearForm,
-        label: const Text('New Tasting'),
-        icon: const Stack(
-          children: [
-            Icon(Icons.wine_bar),
-            Positioned(
-              right: -2,
-              bottom: -2,
-              child: Icon(Icons.add, size: 14),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [         
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: FloatingActionButton.extended(
+              heroTag: 'goToWines',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    int numberOfWines = int.tryParse(_numberOfWinesController.text) ?? 0;
+                    
+                    // Create a list of numbered wines with default parameters
+                    final wines = List<Wine>.generate(
+                      numberOfWines,
+                      (index) => Wine(
+                        wineNumber: index + 1,
+                        wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
+                        grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
+                        country: _countryController.text.isEmpty ? null : _countryController.text,
+                        region: _regionController.text.isEmpty ? null : _regionController.text,
+                        producer: _producerController.text.isEmpty ? null : _producerController.text,
+                        year: _yearController.text.isEmpty ? null : _yearController.text,
+                      ),
+                    );
+
+                    final tasting = Tasting(
+                      name: _nameController.text,
+                      id: _selectedTasting?.id ?? _savedTastings.length + 1,
+                      date: _dateController.text,
+                      details: _detailsController.text,
+                      flight: _flightController.text,
+                      numberOfWines: numberOfWines,
+                      wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
+                      grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
+                      country: _countryController.text.isEmpty ? null : _countryController.text,
+                      region: _regionController.text.isEmpty ? null : _regionController.text,
+                      producer: _producerController.text.isEmpty ? null : _producerController.text,
+                      year: _yearController.text.isEmpty ? null : _yearController.text,
+                      wines: _selectedTasting?.wines ?? wines, // Use existing wines or create new ones
+                      isRevealed: _selectedTasting?.isRevealed ?? false,
+                    );
+
+                    // Ensure we have the correct number of wines
+                    if (tasting.wines.length < numberOfWines) {
+                      // Add more wines if needed
+                      final additionalWines = List<Wine>.generate(
+                        numberOfWines - tasting.wines.length,
+                        (index) => Wine(wineNumber: tasting.wines.length + index + 1),
+                      );
+                      tasting.wines.addAll(additionalWines);
+                    }
+
+                    // Save the tasting
+                    await StorageService.saveTasting(tasting);
+                    print('Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
+
+                    if (mounted) {
+                      Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => WineDeckPage(tasting: tasting, currentCard: 0),
+                                  ),
+                                );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to save: $e')),
+                    );
+                  }
+                }
+              },
+              label: const Text('Go to Wine notes'),
+              icon: const Icon(Icons.wine_bar),
             ),
-          ],
-        ),
-        tooltip: 'Create New Tasting',
+          ),
+          if (_selectedTasting != null) ...[   
+            FloatingActionButton.extended(
+              heroTag: 'newTasting',
+              onPressed: _clearForm,
+              label: const Text('New Tasting'),
+              icon: const Stack(
+                children: [
+                  Icon(Icons.wine_bar),
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: Icon(Icons.add, size: 14),
+                  ),
+                ],
+              ),
+              tooltip: 'New Tasting',
+            ),
+          ]
+        ],
       ),
       appBar: AppBar(
         title: const Text('Tasting Summary'),
@@ -286,77 +366,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                         ),
                         maxLines: 3,
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              try {
-                                int numberOfWines = int.tryParse(_numberOfWinesController.text) ?? 0;
-                                
-                                // Create a list of numbered wines with default parameters
-                                final wines = List<Wine>.generate(
-                                  numberOfWines,
-                                  (index) => Wine(
-                                    wineNumber: index + 1,
-                                    wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
-                                    grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
-                                    country: _countryController.text.isEmpty ? null : _countryController.text,
-                                    region: _regionController.text.isEmpty ? null : _regionController.text,
-                                    producer: _producerController.text.isEmpty ? null : _producerController.text,
-                                    year: _yearController.text.isEmpty ? null : _yearController.text,
-                                  ),
-                                );
-
-                                final tasting = Tasting(
-                                  name: _nameController.text,
-                                  id: _selectedTasting?.id ?? _savedTastings.length + 1,
-                                  date: _dateController.text,
-                                  details: _detailsController.text,
-                                  flight: _flightController.text,
-                                  numberOfWines: numberOfWines,
-                                  wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
-                                  grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
-                                  country: _countryController.text.isEmpty ? null : _countryController.text,
-                                  region: _regionController.text.isEmpty ? null : _regionController.text,
-                                  producer: _producerController.text.isEmpty ? null : _producerController.text,
-                                  year: _yearController.text.isEmpty ? null : _yearController.text,
-                                  wines: _selectedTasting?.wines ?? wines, // Use existing wines or create new ones
-                                  isRevealed: _selectedTasting?.isRevealed ?? false,
-                                );
-
-                                // Ensure we have the correct number of wines
-                                if (tasting.wines.length < numberOfWines) {
-                                  // Add more wines if needed
-                                  final additionalWines = List<Wine>.generate(
-                                    numberOfWines - tasting.wines.length,
-                                    (index) => Wine(wineNumber: tasting.wines.length + index + 1),
-                                  );
-                                  tasting.wines.addAll(additionalWines);
-                                }
-
-                                // Save the tasting
-                                await StorageService.saveTasting(tasting);
-                                print('Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
-
-                                if (mounted) {
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => WineDeckPage(tasting: tasting, currentCard: 0),
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Failed to save: $e')),
-                                );
-                              }
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text('Go to wine cards'),
-                          ),
-                        ),
                       ],
                     ),
                   ),
