@@ -284,7 +284,7 @@ class _WineCardState extends State<WineCard> {
                     value: widget.wine.rating,
                     min: 1.0,
                     max: 5.0,
-                    divisions: 8,
+                    divisions: 80,
                     label: widget.wine.rating.toStringAsFixed(1),
                     onChanged: (value) {
                       setState(() => widget.wine.rating = value);
