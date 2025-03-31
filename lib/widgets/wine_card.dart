@@ -50,6 +50,18 @@ class _WineCardState extends State<WineCard> {
         ),
         const SizedBox(height: 16),
         TextFormField(
+          initialValue: widget.wine.name,
+          decoration:  InputDecoration(
+            labelText: 'Wine Name',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) {
+            widget.wine.name = value;
+            _onFieldChanged();
+          },
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
           initialValue: widget.wine.wineType,
           decoration: const InputDecoration(
             labelText: 'Type',
@@ -141,51 +153,6 @@ class _WineCardState extends State<WineCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                    border: Border.all(color: Colors.purple.shade300, width: 2),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '#${widget.wine.wineNumber}',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: widget.wine.name,
-                    decoration:  InputDecoration(
-                      labelText: 'Wine Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      widget.wine.name = value;
-                      _onFieldChanged();
-                    },
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 16),
             _buildWineParameters(),
             const SizedBox(height: 16),

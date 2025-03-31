@@ -115,16 +115,17 @@ class _WineDeckPageState extends State<WineDeckPage> {
                               year: widget.tasting.year,
                             ));
                             _saveTasting();
-                          });
-                          // Wait for the next frame when the PageView is built
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (_wines.length > 1) {
-                              _pageController.animateToPage(
-                                _wines.length - 1,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            }
+
+                            // Schedule the animation for the next frame
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (_wines.length > 1) {
+                                _pageController.animateToPage(
+                                  _wines.length - 1,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            });
                           });
                         },
                         icon: const Icon(Icons.wine_bar),
