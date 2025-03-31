@@ -14,6 +14,8 @@ class TastingSummary extends StatefulWidget {
 }
 
 class _TastingSummaryState extends State<TastingSummary> {
+  bool _isEditing = false;
+
   bool _isWineParametersExpanded = false;
   List<Tasting> _savedTastings = [];
   Tasting? _selectedTasting;
@@ -112,6 +114,30 @@ class _TastingSummaryState extends State<TastingSummary> {
   }
 
   @override
+  Widget _buildTastingIcon() {
+    return Container(
+      width: 48,
+      height: 20,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: const [
+          Positioned(
+            left: 0,
+            child: Icon(Icons.wine_bar, size: 16),
+          ),
+          Positioned(
+            left: 10,
+            child: Icon(Icons.wine_bar, size: 16),
+          ),
+          Positioned(
+            left: 20,
+            child: Icon(Icons.wine_bar, size: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: Row(
@@ -185,8 +211,8 @@ class _TastingSummaryState extends State<TastingSummary> {
                   }
                 }
               },
-              label: const Text('Go to Wine notes'),
-              icon: const Icon(Icons.wine_bar),
+              label: const Text('Tasting notes'),
+              icon: const Icon(Icons.edit_note),
             ),
           ),
           if (_selectedTasting != null) ...[   
@@ -194,13 +220,13 @@ class _TastingSummaryState extends State<TastingSummary> {
               heroTag: 'newTasting',
               onPressed: _clearForm,
               label: const Text('New Tasting'),
-              icon: const Stack(
+              icon: Stack(
                 children: [
-                  Icon(Icons.wine_bar),
+                  _buildTastingIcon(),
                   Positioned(
-                    right: -2,
+                    right: 4,
                     bottom: -2,
-                    child: Icon(Icons.add, size: 14),
+                    child: const Icon(Icons.add, size: 14),
                   ),
                 ],
               ),
@@ -255,6 +281,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                           labelText: 'Date (YYYY-MM-DD)',
                           border: OutlineInputBorder(),
                         ),
+                        onTap: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                        onTapOutside: (event) {
+                          setState(() {
+                            _isEditing = false;
+                          });
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a date';
@@ -271,6 +307,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                           border: OutlineInputBorder(),
                           hintText: 'Enter the flight name or number',
                         ),
+                        onTap: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                        onTapOutside: (event) {
+                          setState(() {
+                            _isEditing = false;
+                          });
+                        },
                       ),
                       const SizedBox(height: 24),
                       TextFormField(
@@ -280,6 +326,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                           border: OutlineInputBorder(),
                           hintText: 'Enter the number of wines in this tasting',
                         ),
+                        onTap: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                        onTapOutside: (event) {
+                          setState(() {
+                            _isEditing = false;
+                          });
+                        },
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -298,6 +354,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                           border: OutlineInputBorder(),
                         ),
                         maxLines: 3,
+                        onTap: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                        onTapOutside: (event) {
+                          setState(() {
+                            _isEditing = false;
+                          });
+                        },
                       ),
                       const SizedBox(height: 24),
                       ExpansionTile(
@@ -316,6 +382,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                               border: OutlineInputBorder(),
                               hintText: 'e.g., Red, White, Rosé',
                             ),
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            onTapOutside: (event) {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -325,6 +401,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                               border: OutlineInputBorder(),
                               hintText: 'e.g., Cabernet Sauvignon, Merlot',
                             ),
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            onTapOutside: (event) {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -334,6 +420,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                               border: OutlineInputBorder(),
                               hintText: 'e.g., France, Italy',
                             ),
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            onTapOutside: (event) {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -343,6 +439,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                               border: OutlineInputBorder(),
                               hintText: 'e.g., Bordeaux, Tuscany',
                             ),
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            onTapOutside: (event) {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -352,6 +458,16 @@ class _TastingSummaryState extends State<TastingSummary> {
                               border: OutlineInputBorder(),
                               hintText: 'e.g., Château Margaux',
                             ),
+                            onTap: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                            onTapOutside: (event) {
+                              setState(() {
+                                _isEditing = false;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -371,7 +487,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                   ),
                 ),
               ),
-              if (_savedTastings.isNotEmpty) ...[
+              if (_savedTastings.isNotEmpty && !_isEditing) ...[
                 const Divider(),
                 const SizedBox(height: 24),
                 Container(
@@ -394,11 +510,10 @@ class _TastingSummaryState extends State<TastingSummary> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.wine_bar, size: 20),
-                          const SizedBox(width: 8),
+                          _buildTastingIcon(),
                           const Text(
                             'Saved Tastings',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -476,9 +591,14 @@ class _TastingSummaryState extends State<TastingSummary> {
                       ),
                       if (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty) ...[
                         const SizedBox(height: 14),
-                        const Text(
-                          'Wines',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        Row (
+                          children: [
+                            const Icon(Icons.wine_bar, size: 18),
+                            const Text(
+                              'Wines',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 14),
                         Container(
@@ -493,7 +613,14 @@ class _TastingSummaryState extends State<TastingSummary> {
                             itemBuilder: (context, index) {
                               final wine = _selectedTasting!.wines[index];
                               return ListTile(
-                                title: Text('${wine.wineNumber} [${wine.rating}] ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}'),
+                                dense: true,
+                                visualDensity: VisualDensity.compact,
+                                minLeadingWidth: 20,
+                                title: Text(
+                                  '${wine.wineNumber} [${wine.rating}] ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
                                 onTap: () {
                                   //TODO navigate to wine card
                                   Navigator.of(context).push(
