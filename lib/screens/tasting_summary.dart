@@ -215,22 +215,16 @@ class _TastingSummaryState extends State<TastingSummary> {
               icon: const Icon(Icons.edit_note),
             ),
           ),
-          if (_selectedTasting != null) ...[   
+          if (_isEditing && _savedTastings.isNotEmpty) ...[   
             FloatingActionButton.extended(
-              heroTag: 'newTasting',
-              onPressed: _clearForm,
-              label: const Text('New Tasting'),
-              icon: Stack(
-                children: [
-                  _buildTastingIcon(),
-                  Positioned(
-                    right: 4,
-                    bottom: -2,
-                    child: const Icon(Icons.add, size: 14),
-                  ),
-                ],
-              ),
-              tooltip: 'New Tasting',
+              heroTag: 'savedTastings',
+              onPressed: () {
+                setState(() {
+                  _isEditing = false;
+                });
+              },
+              label: const Text('Saved tastings'),
+              icon: _buildTastingIcon(),
             ),
           ]
         ],
@@ -243,7 +237,6 @@ class _TastingSummaryState extends State<TastingSummary> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Saved Tastings Section
             if (_savedTastings.isNotEmpty) ...[
               const SizedBox(height: 24),
               const Divider(),
@@ -267,6 +260,11 @@ class _TastingSummaryState extends State<TastingSummary> {
                           labelText: 'Tasting Name',
                           border: OutlineInputBorder(),
                         ),
+                        onTap: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a tasting name';
@@ -284,11 +282,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                         onTap: () {
                           setState(() {
                             _isEditing = true;
-                          });
-                        },
-                        onTapOutside: (event) {
-                          setState(() {
-                            _isEditing = false;
                           });
                         },
                         validator: (value) {
@@ -312,11 +305,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                             _isEditing = true;
                           });
                         },
-                        onTapOutside: (event) {
-                          setState(() {
-                            _isEditing = false;
-                          });
-                        },
                       ),
                       const SizedBox(height: 24),
                       TextFormField(
@@ -329,11 +317,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                         onTap: () {
                           setState(() {
                             _isEditing = true;
-                          });
-                        },
-                        onTapOutside: (event) {
-                          setState(() {
-                            _isEditing = false;
                           });
                         },
                         keyboardType: TextInputType.number,
@@ -359,11 +342,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                             _isEditing = true;
                           });
                         },
-                        onTapOutside: (event) {
-                          setState(() {
-                            _isEditing = false;
-                          });
-                        },
                       ),
                       const SizedBox(height: 24),
                       ExpansionTile(
@@ -387,11 +365,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                                 _isEditing = true;
                               });
                             },
-                            onTapOutside: (event) {
-                              setState(() {
-                                _isEditing = false;
-                              });
-                            },
+
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -404,11 +378,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                             onTap: () {
                               setState(() {
                                 _isEditing = true;
-                              });
-                            },
-                            onTapOutside: (event) {
-                              setState(() {
-                                _isEditing = false;
                               });
                             },
                           ),
@@ -425,11 +394,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                                 _isEditing = true;
                               });
                             },
-                            onTapOutside: (event) {
-                              setState(() {
-                                _isEditing = false;
-                              });
-                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -444,11 +408,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                                 _isEditing = true;
                               });
                             },
-                            onTapOutside: (event) {
-                              setState(() {
-                                _isEditing = false;
-                              });
-                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -461,11 +420,6 @@ class _TastingSummaryState extends State<TastingSummary> {
                             onTap: () {
                               setState(() {
                                 _isEditing = true;
-                              });
-                            },
-                            onTapOutside: (event) {
-                              setState(() {
-                                _isEditing = false;
                               });
                             },
                           ),
@@ -515,6 +469,27 @@ class _TastingSummaryState extends State<TastingSummary> {
                             'Saved Tastings',
                             style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                           ),
+                          if (_selectedTasting != null) ...[   
+                            IconButton(
+                              onPressed: () {
+                                _clearForm();
+                                setState(() {
+                                  _isEditing = true;
+                                });
+                              },
+                              icon: Stack(
+                                children: [
+                                  _buildTastingIcon(),
+                                  Positioned(
+                                    right: 4,
+                                    bottom: -2,
+                                    child: const Icon(Icons.add, size: 14),
+                                  ),
+                                ],
+                              ),
+                              tooltip: 'New Tasting',
+                            ),
+                          ]
                         ],
                       ),
                       const SizedBox(height: 16),

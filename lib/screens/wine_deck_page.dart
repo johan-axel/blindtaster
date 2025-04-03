@@ -61,83 +61,101 @@ class _WineDeckPageState extends State<WineDeckPage> {
   }
 
   Widget _buildWineList() {
-    return _wines.isEmpty
-        ? const Center(child: Text('Add your first wine tasting note!'))
-        : Column(
+    return Column(
+      children: [
+        // Navigation buttons and page indicator
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Navigation buttons and page indicator
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                      if (widget.currentCard > 0) ...[
-                        IconButton(
-                        onPressed: () => _navigateToCard(widget.currentCard - 1),
-                        icon: const Icon(Icons.arrow_back),
-                        )
-                      ] else ...[
-                        IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => TastingSummary(
-                                initialTasting: widget.tasting,
-                              ),
-                            ),
-                          );
-                        },
-                        tooltip: 'Back to Tasting summary',
+              // Left side - Edit/Back button
+              if (_wines.isEmpty)
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => TastingSummary(
+                          initialTasting: widget.tasting,
+                        ),
                       ),
-                      ],
-                      Text(
-                        'Wine ${widget.currentCard + 1} of ${_wines.length}',
-                        style: const TextStyle(fontSize: 16),
+                    );
+                  },
+                  tooltip: 'Back to Tasting summary',
+                )
+              else if (widget.currentCard > 0)
+                IconButton(
+                  onPressed: () => _navigateToCard(widget.currentCard - 1),
+                  icon: const Icon(Icons.arrow_back),
+                )
+              else
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => TastingSummary(
+                          initialTasting: widget.tasting,
+                        ),
                       ),
-                   if (widget.currentCard < _wines.length - 1) ...[
-                      IconButton(
-                        onPressed: () => _navigateToCard(widget.currentCard + 1),
-                        icon: const Icon(Icons.arrow_forward),
-                      )
-                    ] else ...[ 
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            // Add new wine with next number in sequence
-                            widget.tasting.wines.add(Wine(
-                              wineNumber: _wines.length + 1,
-                              wineType: widget.tasting.wineType,
-                              grapes: widget.tasting.grapes,
-                              country: widget.tasting.country,
-                              region: widget.tasting.region,
-                              producer: widget.tasting.producer,
-                              year: widget.tasting.year,
-                            ));
-                            _saveTasting();
-
-                            // Schedule the animation for the next frame
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (_wines.length > 1) {
-                                _pageController.animateToPage(
-                                  _wines.length - 1,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              }
-                            });
-                          });
-                        },
-                        icon: const Icon(Icons.wine_bar),
-                        tooltip: 'Add new wine to tasting',                        
-                      )
-                    ],
-                  ],
+                    );
+                  },
+                  tooltip: 'Back to Tasting summary',
                 ),
+              // Center - Page indicator
+              Text(
+                _wines.isEmpty ? '' : 'Wine ${widget.currentCard + 1} of ${_wines.length}',
+                style: const TextStyle(fontSize: 16),
               ),
-              // Wine cards
-              Expanded(
-                child: PageView.builder(
+              // Right side - Forward/Add button
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_wines.isNotEmpty && widget.currentCard < _wines.length - 1)
+                    IconButton(
+                      onPressed: () => _navigateToCard(widget.currentCard + 1),
+                      icon: const Icon(Icons.arrow_forward),
+                    ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        // Add new wine with next number in sequence
+                        widget.tasting.wines.add(Wine(
+                          wineNumber: _wines.length + 1,
+                          wineType: widget.tasting.wineType,
+                          grapes: widget.tasting.grapes,
+                          country: widget.tasting.country,
+                          region: widget.tasting.region,
+                          producer: widget.tasting.producer,
+                          year: widget.tasting.year,
+                        ));
+                        _saveTasting();
+
+                        // Update current card to the new wine
+                        widget.currentCard = _wines.length - 1;
+                        
+                        // Schedule the animation for the next frame
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _pageController.jumpToPage(widget.currentCard);
+                          // Force a rebuild to update the page indicator
+                          if (mounted) setState(() {});
+                        });
+                      });
+                    },
+                    icon: const Icon(Icons.wine_bar),
+                    tooltip: 'Add new wine to tasting',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        // Wine cards or empty state
+        Expanded(
+          child: _wines.isEmpty
+              ? const Center(child: Text('Add your first wine tasting note!'))
+              : PageView.builder(
                   controller: _pageController,
                   itemCount: _wines.length,
                   itemBuilder: (context, index) {
@@ -148,9 +166,10 @@ class _WineDeckPageState extends State<WineDeckPage> {
                     );
                   },
                 ),
-              ),
-            ],
-          );
+        ),
+      ],
+    );
+
   }
 
   @override
