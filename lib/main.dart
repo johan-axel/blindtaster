@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'screens/tasting_summary.dart';
-import 'services/storage_service.dart';
+import 'services/storage_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await StorageService.init();
+  await StorageProvider.instance.init();
   runApp(const WineTasterApp());
 }
 

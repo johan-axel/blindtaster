@@ -3,7 +3,7 @@ import '../models/tasting.dart';
 import '../models/wine.dart';
 import '../widgets/wine_card.dart';
 import '../screens/tasting_summary.dart';
-import '../services/storage_service.dart';
+import '../services/storage_provider.dart';
 
 class WineDeckPage extends StatefulWidget {
   final Tasting tasting;
@@ -18,7 +18,7 @@ class WineDeckPage extends StatefulWidget {
 class _WineDeckPageState extends State<WineDeckPage> {
   Future<void> _saveTasting() async {
     try {
-      await StorageService.saveTasting(widget.tasting);
+      await StorageProvider.instance.saveTasting(widget.tasting);
     } catch (e) {
       // Show error message if save fails
       if (mounted) {
@@ -29,19 +29,23 @@ class _WineDeckPageState extends State<WineDeckPage> {
     }
   }
   List<Wine> get _wines => widget.tasting.wines;
-  final PageController _pageController = PageController();
+  late final PageController _pageController;
+
+  void _initPageController() {
+    _pageController = PageController(initialPage: widget.currentCard);
+    _pageController.addListener(() {
+      if (_pageController.page != null && _pageController.page!.round() != widget.currentCard) {
+        setState(() {
+          widget.currentCard = _pageController.page!.round();
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    if (widget.currentCard > 0) {
-      _pageController.jumpToPage(widget.currentCard);
-    }
-    _pageController.addListener(() {
-      setState(() {
-        widget.currentCard = _pageController.page?.round() ?? 0;
-      });
-    });
+    _initPageController();
   }
 
   @override
@@ -189,7 +193,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
                   setState(() {
                     widget.tasting.isRevealed = value;
                   });
-                  await StorageService.saveTasting(widget.tasting);
+                  await StorageProvider.instance.saveTasting(widget.tasting);
                 },
               ),
               const SizedBox(width: 8),

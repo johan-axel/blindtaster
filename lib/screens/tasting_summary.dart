@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/tasting.dart';
 import '../models/wine.dart';
-import '../services/storage_service.dart';
+import '../services/storage_provider.dart';
 import 'wine_deck_page.dart';
 
 class TastingSummary extends StatefulWidget {
@@ -22,7 +22,7 @@ class _TastingSummaryState extends State<TastingSummary> {
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _loadSavedTastings() async {
-    final tastings = await StorageService.getAllTastings();
+    final tastings = await StorageProvider.instance.getAllTastings();
     setState(() {
       _savedTastings = tastings;
     });
@@ -142,13 +142,15 @@ class _TastingSummaryState extends State<TastingSummary> {
     return Scaffold(
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [         
+        children: [   
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: FloatingActionButton.extended(
-              heroTag: 'goToWines',
+              key: const Key('goToWines'),
               onPressed: () async {
+                print('[TastingSummary] Attempting form submission');
                 if (_formKey.currentState!.validate()) {
+                  print('[TastingSummary] Form validation passed');
                   try {
                     int numberOfWines = int.tryParse(_numberOfWinesController.text) ?? 0;
                     
@@ -194,10 +196,12 @@ class _TastingSummaryState extends State<TastingSummary> {
                     }
 
                     // Save the tasting
-                    await StorageService.saveTasting(tasting);
-                    print('Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
+                    print('[TastingSummary] Saving tasting to storage');
+                    await StorageProvider.instance.saveTasting(tasting);
+                    print('[TastingSummary] Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
 
                     if (mounted) {
+                      print('[TastingSummary] Navigating to WineDeckPage');
                       Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                     builder: (context) => WineDeckPage(tasting: tasting, currentCard: 0),
@@ -541,7 +545,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                                     ) ?? false;
 
                                     if (confirmed) {
-                                      await StorageService.deleteTasting(tasting.id);
+                                      await StorageProvider.instance.deleteTasting(tasting.id);
                                       setState(() {
                                         _savedTastings.removeWhere((t) => t.name == tasting.name);
                                         if (_selectedTasting?.name == tasting.name) {
