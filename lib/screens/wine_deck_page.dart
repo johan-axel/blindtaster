@@ -74,28 +74,14 @@ class _WineDeckPageState extends State<WineDeckPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Left side - Edit/Back button
-              if (_wines.isEmpty)
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => TastingSummary(
-                          initialTasting: widget.tasting,
-                        ),
-                      ),
-                    );
-                  },
-                  tooltip: 'Back to Tasting summary',
-                )
-              else if (widget.currentCard > 0)
+if (widget.currentCard > 0)
                 IconButton(
                   onPressed: () => _navigateToCard(widget.currentCard - 1),
                   icon: const Icon(Icons.arrow_back),
                 )
               else
                 IconButton(
-                  icon: const Icon(Icons.edit),
+                  icon: const Icon(Icons.summarize),
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
@@ -109,7 +95,7 @@ class _WineDeckPageState extends State<WineDeckPage> {
                 ),
               // Center - Page indicator
               Text(
-                _wines.isEmpty ? '' : 'Wine ${widget.currentCard + 1} of ${_wines.length}',
+                _wines.isEmpty ? 'Add your first wine tasting note! ->' : 'Wine ${widget.currentCard + 1} of ${_wines.length}',
                 style: const TextStyle(fontSize: 16),
               ),
               // Right side - Forward/Add button
@@ -121,35 +107,47 @@ class _WineDeckPageState extends State<WineDeckPage> {
                       onPressed: () => _navigateToCard(widget.currentCard + 1),
                       icon: const Icon(Icons.arrow_forward),
                     ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        // Add new wine with next number in sequence
-                        widget.tasting.wines.add(Wine(
-                          wineNumber: _wines.length + 1,
-                          wineType: widget.tasting.wineType,
-                          grapes: widget.tasting.grapes,
-                          country: widget.tasting.country,
-                          region: widget.tasting.region,
-                          producer: widget.tasting.producer,
-                          year: widget.tasting.year,
-                        ));
-                        _saveTasting();
+                  // Only show add wine button on the last wine or when there are no wines
+                  if (_wines.isEmpty || widget.currentCard == _wines.length - 1)
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          // Add new wine with next number in sequence
+                          widget.tasting.wines.add(Wine(
+                            wineNumber: _wines.length + 1,
+                            wineType: widget.tasting.wineType,
+                            grapes: widget.tasting.grapes,
+                            country: widget.tasting.country,
+                            region: widget.tasting.region,
+                            producer: widget.tasting.producer,
+                            year: widget.tasting.year,
+                          ));
+                          _saveTasting();
 
-                        // Update current card to the new wine
-                        widget.currentCard = _wines.length - 1;
-                        
-                        // Schedule the animation for the next frame
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _pageController.jumpToPage(widget.currentCard);
-                          // Force a rebuild to update the page indicator
-                          if (mounted) setState(() {});
+                          // Update current card to the new wine
+                          widget.currentCard = _wines.length - 1;
+                          
+                          // Schedule the animation for the next frame
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _pageController.jumpToPage(widget.currentCard);
+                            // Force a rebuild to update the page indicator
+                            if (mounted) setState(() {});
+                          });
                         });
-                      });
-                    },
-                    icon: const Icon(Icons.wine_bar),
-                    tooltip: 'Add new wine to tasting',
-                  ),
+                      },
+                      icon: Stack(
+                        alignment: Alignment.center,
+                        children: const [
+                          Icon(Icons.wine_bar),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Icon(Icons.add_circle, size: 14, color: Colors.green),
+                          ),
+                        ],
+                      ),
+                      tooltip: 'Add new wine to tasting',
+                    ),
                 ],
               ),
             ],
