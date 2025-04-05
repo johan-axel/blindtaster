@@ -160,9 +160,9 @@ void main() {
       // Verify wine was added
       expect(tasting.wines.length, equals(1));
       expect(find.text('Wine 1 of 1'), findsOneWidget);
-      expect(find.byIcon(Icons.edit), findsOneWidget); // Edit button shown for first wine
+      expect(find.byIcon(Icons.summarize), findsOneWidget); // Summary button shown for first wine
       expect(find.byIcon(Icons.arrow_back), findsNothing); // No back button on first wine
-      expect(find.byIcon(Icons.wine_bar), findsOneWidget); // Add wine button shown
+      expect(find.byIcon(Icons.wine_bar), findsOneWidget); // Add wine button shown when on the last wine
 
       // Add another wine
       await tester.tap(find.widgetWithIcon(IconButton, Icons.wine_bar));
@@ -214,8 +214,10 @@ void main() {
 
       // Verify initial state
       expect(find.text('Wine 1 of 2'), findsOneWidget);
-      expect(find.byIcon(Icons.edit), findsOneWidget); // Edit button shown for first wine
+      expect(find.byIcon(Icons.summarize), findsOneWidget); // Summary button shown for first wine
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget); // Forward button shown
+      expect(find.byIcon(Icons.arrow_back), findsNothing); // No back button on first wine
+      expect(find.byIcon(Icons.wine_bar), findsNothing); // Add wine button shown
 
       // Navigate to next wine
       await tester.tap(find.byIcon(Icons.arrow_forward));
@@ -225,6 +227,7 @@ void main() {
       expect(find.text('Wine 2 of 2'), findsOneWidget);
       expect(find.byIcon(Icons.arrow_back), findsOneWidget); // Back button shown
       expect(find.byIcon(Icons.arrow_forward), findsNothing); // No forward button on last wine
+      expect(find.byIcon(Icons.wine_bar), findsOneWidget); // Add wine button shown
 
       // Navigate back
       await tester.tap(find.byIcon(Icons.arrow_back));
@@ -232,7 +235,7 @@ void main() {
 
       // Verify navigation back
       expect(find.text('Wine 1 of 2'), findsOneWidget);
-      expect(find.byIcon(Icons.edit), findsOneWidget); // Edit button shown for first wine
+      expect(find.byIcon(Icons.summarize), findsOneWidget); // Summary button shown for first wine
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget); // Forward button shown
     });
   });
