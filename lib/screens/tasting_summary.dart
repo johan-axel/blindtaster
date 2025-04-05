@@ -504,10 +504,12 @@ class _TastingSummaryState extends State<TastingSummary> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: ListView.builder(
+                          key: const Key('savedTastingsList'),
                           itemCount: _savedTastings.length,
                           itemBuilder: (context, index) {
                             final tasting = _savedTastings[index];
                             return Card(
+                              key: Key('tastingCard_${tasting.id}'),
                               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -515,6 +517,7 @@ class _TastingSummaryState extends State<TastingSummary> {
                                 side: BorderSide(color: Colors.grey.shade200),
                               ),
                               child: ListTile(
+                                key: Key('tastingListTile_${tasting.id}'),
                                 title: Text(
                                   '${tasting.name} ${tasting.flight?.padLeft(1, ' ') ?? ''}',
                                   style: const TextStyle(fontWeight: FontWeight.w500),
@@ -588,10 +591,12 @@ class _TastingSummaryState extends State<TastingSummary> {
                           ),
                           height: 150,
                           child: ListView.builder(
+                            key: const Key('winesList'),
                             itemCount: _selectedTasting!.wines.length,
                             itemBuilder: (context, index) {
                               final wine = _selectedTasting!.wines[index];
                               return ListTile(
+                                key: Key('wineListTile_${wine.wineNumber}'),
                                 dense: true,
                                 visualDensity: VisualDensity.compact,
                                 minLeadingWidth: 20,
