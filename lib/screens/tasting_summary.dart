@@ -6,6 +6,7 @@ import '../widgets/tasting_form.dart';
 import '../widgets/saved_tastings_list.dart';
 import '../widgets/wines_list.dart';
 import 'wine_deck_page.dart';
+import 'settings_page.dart';
 
 class TastingSummary extends StatefulWidget {
   final Tasting? initialTasting;
@@ -137,6 +138,22 @@ class _TastingSummaryState extends State<TastingSummary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Blind Taster'),
+        backgroundColor: Colors.purple.shade100,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsPage(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -270,10 +287,6 @@ class _TastingSummaryState extends State<TastingSummary> {
             ),
           ],
         ],
-      ),
-      appBar: AppBar(
-        title: const Text('Tasting Summary'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
