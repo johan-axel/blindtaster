@@ -39,13 +39,22 @@ class SavedTastingsList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildTastingIcon(),
-              const Text(
-                'Saved Tastings',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              // Left side with title and icon
+              Row(
+                children: [
+                  _buildTastingIcon(),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Saved Tastings',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              if (selectedTasting != null) ...[
+              
+              // Right side with new tasting button
+              if (selectedTasting != null)
                 IconButton(
                   onPressed: () {
                     onNewTasting();
@@ -63,7 +72,6 @@ class SavedTastingsList extends StatelessWidget {
                   ),
                   tooltip: 'New Tasting',
                 ),
-              ],
             ],
           ),
           const SizedBox(height: 16),
