@@ -180,6 +180,29 @@ class _WineCardState extends State<WineCard> {
                 _onFieldChanged();
               },
             ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Text('Smell Quality:', style: TextStyle(fontSize: 14)),
+                Expanded(
+                  child: Slider(
+                    value: widget.wine.smellQuality ?? 3.0,
+                    min: 1.0,
+                    max: 5.0,
+                    divisions: 8,
+                    label: (widget.wine.smellQuality ?? 3.0).toStringAsFixed(1),
+                    onChanged: (value) {
+                      setState(() {
+                        widget.wine.smellQuality = value;
+                      });
+                      _onFieldChanged();
+                    },
+                  ),
+                ),
+                Text((widget.wine.smellQuality ?? 3.0).toStringAsFixed(1), 
+                     style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
             const SizedBox(height: 16),
             TextFormField(
               initialValue: widget.wine.taste,
@@ -193,6 +216,29 @@ class _WineCardState extends State<WineCard> {
                 _onFieldChanged();
               },
             ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Text('Taste Quality:', style: TextStyle(fontSize: 14)),
+                Expanded(
+                  child: Slider(
+                    value: widget.wine.tasteQuality ?? 3.0,
+                    min: 1.0,
+                    max: 5.0,
+                    divisions: 8,
+                    label: (widget.wine.tasteQuality ?? 3.0).toStringAsFixed(1),
+                    onChanged: (value) {
+                      setState(() {
+                        widget.wine.tasteQuality = value;
+                      });
+                      _onFieldChanged();
+                    },
+                  ),
+                ),
+                Text((widget.wine.tasteQuality ?? 3.0).toStringAsFixed(1), 
+                     style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
             const SizedBox(height: 16),
             TextFormField(
               initialValue: widget.wine.aftertaste,
@@ -205,6 +251,29 @@ class _WineCardState extends State<WineCard> {
                 widget.wine.aftertaste = value;
                 _onFieldChanged();
               },
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Text('Aftertaste Quality:', style: TextStyle(fontSize: 14)),
+                Expanded(
+                  child: Slider(
+                    value: widget.wine.aftertasteQuality ?? 3.0,
+                    min: 1.0,
+                    max: 5.0,
+                    divisions: 8,
+                    label: (widget.wine.aftertasteQuality ?? 3.0).toStringAsFixed(1),
+                    onChanged: (value) {
+                      setState(() {
+                        widget.wine.aftertasteQuality = value;
+                      });
+                      _onFieldChanged();
+                    },
+                  ),
+                ),
+                Text((widget.wine.aftertasteQuality ?? 3.0).toStringAsFixed(1), 
+                     style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
             ),
             const SizedBox(height: 16),
             TextFormField(

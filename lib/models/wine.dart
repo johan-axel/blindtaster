@@ -61,6 +61,15 @@ class Wine extends HiveObject {
   @HiveField(18)
   String? year;
 
+  @HiveField(19)
+  double? smellQuality;
+
+  @HiveField(20)
+  double? tasteQuality;
+
+  @HiveField(21)
+  double? aftertasteQuality;
+
   Wine({
     required this.wineNumber,
     this.name = '',
@@ -81,5 +90,8 @@ class Wine extends HiveObject {
     this.sweetness = 0.0,
     this.tannins = 0.0,
     this.rating = 3.0,
+    this.smellQuality = 3.0,
+    this.tasteQuality = 3.0,
+    this.aftertasteQuality = 3.0,
   });
 }
