@@ -4,6 +4,15 @@ part 'settings.g.dart';
 
 @HiveType(typeId: 3)
 class Settings extends HiveObject {
+  @HiveField(16)
+  double? minRating;
+
+  @HiveField(17)
+  double? maxRating;
+
+  @HiveField(18)
+  int? ratingSteps;
+
   @HiveField(0)
   bool showWineType;
 
@@ -53,6 +62,9 @@ class Settings extends HiveObject {
   bool showComments;
 
   Settings({
+    this.minRating = 1.0,
+    this.maxRating = 5.0,
+    this.ratingSteps = 80,
     this.showWineType = true,
     this.showGrapes = true,
     this.showCountry = true,

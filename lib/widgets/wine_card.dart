@@ -362,9 +362,9 @@ class _WineCardState extends State<WineCard> {
                   Expanded(
                     child: Slider(
                       value: widget.wine.rating,
-                      min: 1.0,
-                      max: 5.0,
-                      divisions: 80,
+                      min: _settings.minRating!,
+                      max: _settings.maxRating!,
+                      divisions: _settings.ratingSteps!,
                       label: widget.wine.rating.toStringAsFixed(1),
                       onChanged: (value) {
                         setState(() => widget.wine.rating = value);

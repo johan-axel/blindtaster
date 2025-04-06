@@ -63,12 +63,14 @@ class HiveStorageService implements StorageService {
     }
     
     // Open the boxes
-    print('[StorageService] Opening tasting box');
-    _tastingBox = await Hive.openBox<Tasting>(_tastingBoxName);
     print('[StorageService] Opening settings box');
     _settingsBox = await Hive.openBox<Settings>('settings');
     _settings = _settingsBox?.get('user_settings') ?? Settings();
     print('[StorageService] Initialization complete');
+    print('[StorageService] Opening tasting box');
+    _tastingBox = await Hive.openBox<Tasting>(_tastingBoxName);
+ 
+
   }
 
   @override

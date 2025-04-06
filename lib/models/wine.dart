@@ -1,4 +1,6 @@
 import 'package:hive/hive.dart';
+import '../services/storage_provider.dart';
+import 'settings.dart';
 
 part 'wine.g.dart';
 
@@ -70,28 +72,80 @@ class Wine extends HiveObject {
   @HiveField(21)
   double? aftertasteQuality;
 
-  Wine({
+  factory Wine({
+    required int wineNumber,
+    String name = '',
+    String color = '',
+    String smell = '',
+    String taste = '',
+    String? wineType,
+    String? grapes,
+    String? country,
+    String? region,
+    String? producer,
+    String? year,
+    String aftertaste = '',
+    String comments = '',
+    double acidity = 0.0,
+    double body = 0.0,
+    double fruit = 0.0,
+    double sweetness = 0.0,
+    double tannins = 0.0,
+    double? rating,
+    double? smellQuality = 3.0,
+    double? tasteQuality = 3.0,
+    double? aftertasteQuality = 3.0,
+  }) {
+    final settings = StorageProvider.instance.getSettings();
+    
+    return Wine._(
+      wineNumber: wineNumber,
+      name: name,
+      color: color,
+      smell: smell,
+      taste: taste,
+      wineType: wineType,
+      grapes: grapes,
+      country: country,
+      region: region,
+      producer: producer,
+      year: year,
+      aftertaste: aftertaste,
+      comments: comments,
+      acidity: acidity,
+      body: body,
+      fruit: fruit,
+      sweetness: sweetness,
+      tannins: tannins,
+      rating: rating ?? (settings.minRating! + settings.maxRating!) / 2,
+      smellQuality: smellQuality,
+      tasteQuality: tasteQuality,
+      aftertasteQuality: aftertasteQuality,
+    );
+  }
+
+  Wine._({  
     required this.wineNumber,
-    this.name = '',
-    this.color = '',
-    this.smell = '',
-    this.taste = '',
+    required this.name,
+    required this.color,
+    required this.smell,
+    required this.taste,
     this.wineType,
     this.grapes,
     this.country,
     this.region,
     this.producer,
     this.year,
-    this.aftertaste = '',
-    this.comments = '',
-    this.acidity = 0.0,
-    this.body = 0.0,
-    this.fruit = 0.0,
-    this.sweetness = 0.0,
-    this.tannins = 0.0,
-    this.rating = 3.0,
-    this.smellQuality = 3.0,
-    this.tasteQuality = 3.0,
-    this.aftertasteQuality = 3.0,
+    required this.aftertaste,
+    required this.comments,
+    required this.acidity,
+    required this.body,
+    required this.fruit,
+    required this.sweetness,
+    required this.tannins,
+    required this.rating,
+    this.smellQuality,
+    this.tasteQuality,
+    this.aftertasteQuality,
   });
 }

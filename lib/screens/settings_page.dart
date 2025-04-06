@@ -160,6 +160,90 @@ class _SettingsPageState extends State<SettingsPage> {
                       const Divider(),
                       ExpansionTile(
                         title: const Text(
+                          'Rating Configuration',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        initiallyExpanded: false,
+                        children: [
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Rating Range', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: settings.minRating.toString(),
+                                        decoration: const InputDecoration(
+                                          labelText: 'Minimum',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          final newValue = double.tryParse(value);
+                                          if (newValue != null) {
+                                            setState(() {
+                                              settings.minRating = newValue;
+                                              StorageProvider.instance.saveSettings(settings);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: settings.maxRating.toString(),
+                                        decoration: const InputDecoration(
+                                          labelText: 'Maximum',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          final newValue = double.tryParse(value);
+                                          if (newValue != null) {
+                                            setState(() {
+                                              settings.maxRating = newValue;
+                                              StorageProvider.instance.saveSettings(settings);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                const Text('Rating Steps', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 8),
+                                TextFormField(
+                                  initialValue: settings.ratingSteps.toString(),
+                                  decoration: const InputDecoration(
+                                    labelText: 'Number of steps',
+                                    border: OutlineInputBorder(),
+                                    helperText: 'Higher number means smoother slider movement',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) {
+                                    final newValue = int.tryParse(value);
+                                    if (newValue != null) {
+                                      setState(() {
+                                        settings.ratingSteps = newValue;
+                                        StorageProvider.instance.saveSettings(settings);
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ExpansionTile(
+                        title: const Text(
                           'Data Management',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
