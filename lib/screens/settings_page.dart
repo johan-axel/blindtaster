@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/settings.dart';
 import '../services/storage_provider.dart';
 
@@ -10,6 +14,33 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  Future<void> _exportTastingsToCSV() async {
+    try {
+      final csv = StorageProvider.instance.exportTastingsToCSV();
+      final bytes = utf8.encode(csv);
+      
+      // Get temporary directory
+      final tempDir = await getTemporaryDirectory();
+      final fileName = 'wine_tastings_${DateTime.now().toIso8601String()}.csv';
+      final file = File('${tempDir.path}/$fileName');
+      
+      // Write CSV to temporary file
+      await file.writeAsBytes(bytes);
+      
+      // Share the file
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'Wine Tastings Export',
+      );
+      
+      // Clean up temporary file
+      await file.delete();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error exporting tastings: $e')),
+      );
+    }
+  }
   late Settings settings;
 
   @override
@@ -124,6 +155,26 @@ class _SettingsPageState extends State<SettingsPage> {
                               (value) => settings.showProducer = value),
                           _buildToggleRow('Year', settings.showYear,
                               (value) => settings.showYear = value),
+                        ],
+                      ),
+                      const Divider(),
+                      ExpansionTile(
+                        title: const Text(
+                          'Data Management',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        initiallyExpanded: false,
+                        children: [
+                          const SizedBox(height: 8),
+                          ListTile(
+                            title: const Text('Export Tastings'),
+                            subtitle: const Text('Download all tastings as CSV file'),
+                            trailing: ElevatedButton.icon(
+                              onPressed: _exportTastingsToCSV,
+                              icon: const Icon(Icons.download),
+                              label: const Text('Export CSV'),
+                            ),
+                          ),
                         ],
                       ),
                       const Divider(),
