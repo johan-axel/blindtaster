@@ -60,17 +60,13 @@ class SavedTastingsList extends StatelessWidget {
                     onNewTasting();
                     onEditingEnabled();
                   },
-                  icon: Stack(
-                    children: [
-                      _buildTastingIcon(),
-                      Positioned(
-                        right: 4,
-                        bottom: -2,
-                        child: const Icon(Icons.add, size: 14),
-                      ),
-                    ],
+                  icon: const Icon(Icons.add, size: 16),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple.shade100,
+                    foregroundColor: Colors.purple.shade900,
+                    elevation: 2,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
-                  tooltip: 'New Tasting',
                 ),
             ],
           ),
