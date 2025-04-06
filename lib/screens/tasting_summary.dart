@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../models/tasting.dart';
 import '../models/wine.dart';
 import '../services/storage_provider.dart';
+import '../widgets/tasting_form.dart';
+import '../widgets/saved_tastings_list.dart';
+import '../widgets/wines_list.dart';
 import 'wine_deck_page.dart';
 
 class TastingSummary extends StatefulWidget {
@@ -15,18 +18,11 @@ class TastingSummary extends StatefulWidget {
 
 class _TastingSummaryState extends State<TastingSummary> {
   bool _isEditing = false;
-
   bool _isWineParametersExpanded = false;
   List<Tasting> _savedTastings = [];
   Tasting? _selectedTasting;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> _loadSavedTastings() async {
-    final tastings = await StorageProvider.instance.getAllTastings();
-    setState(() {
-      _savedTastings = tastings;
-    });
-  }
   late final TextEditingController _nameController;
   late final TextEditingController _dateController;
   late final TextEditingController _detailsController;
@@ -44,12 +40,15 @@ class _TastingSummaryState extends State<TastingSummary> {
     super.initState();
     _loadSavedTastings();
     _selectedTasting = widget.initialTasting;
+
     // Initialize controllers with values from initialTasting if available
     _nameController = TextEditingController(
       text: widget.initialTasting?.name ?? '',
     );
     _dateController = TextEditingController(
-      text: widget.initialTasting?.date ?? DateTime.now().toIso8601String().split('T')[0],
+      text:
+          widget.initialTasting?.date ??
+          DateTime.now().toIso8601String().split('T')[0],
     );
     _detailsController = TextEditingController(
       text: widget.initialTasting?.details ?? '',
@@ -58,7 +57,7 @@ class _TastingSummaryState extends State<TastingSummary> {
       text: widget.initialTasting?.flight ?? '',
     );
     _numberOfWinesController = TextEditingController(
-      text: widget.initialTasting?.numberOfWines.toString() ?? '',
+      text: widget.initialTasting?.numberOfWines?.toString() ?? '',
     );
     _wineTypeController = TextEditingController(
       text: widget.initialTasting?.wineType ?? '',
@@ -96,6 +95,13 @@ class _TastingSummaryState extends State<TastingSummary> {
     super.dispose();
   }
 
+  Future<void> _loadSavedTastings() async {
+    final tastings = await StorageProvider.instance.getAllTastings();
+    setState(() {
+      _savedTastings = tastings;
+    });
+  }
+
   void _clearForm() {
     setState(() {
       _selectedTasting = null;
@@ -113,7 +119,6 @@ class _TastingSummaryState extends State<TastingSummary> {
     });
   }
 
-  @override
   Widget _buildTastingIcon() {
     return Container(
       width: 48,
@@ -121,28 +126,20 @@ class _TastingSummaryState extends State<TastingSummary> {
       child: Stack(
         clipBehavior: Clip.none,
         children: const [
-          Positioned(
-            left: 0,
-            child: Icon(Icons.wine_bar, size: 16),
-          ),
-          Positioned(
-            left: 10,
-            child: Icon(Icons.wine_bar, size: 16),
-          ),
-          Positioned(
-            left: 20,
-            child: Icon(Icons.wine_bar, size: 16),
-          ),
+          Positioned(left: 0, child: Icon(Icons.wine_bar, size: 16)),
+          Positioned(left: 10, child: Icon(Icons.wine_bar, size: 16)),
+          Positioned(left: 20, child: Icon(Icons.wine_bar, size: 16)),
         ],
       ),
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [   
+        children: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: FloatingActionButton.extended(
@@ -152,19 +149,38 @@ class _TastingSummaryState extends State<TastingSummary> {
                 if (_formKey.currentState!.validate()) {
                   print('[TastingSummary] Form validation passed');
                   try {
-                    int numberOfWines = int.tryParse(_numberOfWinesController.text) ?? 0;
-                    
+                    int numberOfWines =
+                        int.tryParse(_numberOfWinesController.text) ?? 0;
+
                     // Create a list of numbered wines with default parameters
                     final wines = List<Wine>.generate(
                       numberOfWines,
                       (index) => Wine(
                         wineNumber: index + 1,
-                        wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
-                        grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
-                        country: _countryController.text.isEmpty ? null : _countryController.text,
-                        region: _regionController.text.isEmpty ? null : _regionController.text,
-                        producer: _producerController.text.isEmpty ? null : _producerController.text,
-                        year: _yearController.text.isEmpty ? null : _yearController.text,
+                        wineType:
+                            _wineTypeController.text.isEmpty
+                                ? null
+                                : _wineTypeController.text,
+                        grapes:
+                            _grapesController.text.isEmpty
+                                ? null
+                                : _grapesController.text,
+                        country:
+                            _countryController.text.isEmpty
+                                ? null
+                                : _countryController.text,
+                        region:
+                            _regionController.text.isEmpty
+                                ? null
+                                : _regionController.text,
+                        producer:
+                            _producerController.text.isEmpty
+                                ? null
+                                : _producerController.text,
+                        year:
+                            _yearController.text.isEmpty
+                                ? null
+                                : _yearController.text,
                       ),
                     );
 
@@ -175,13 +191,33 @@ class _TastingSummaryState extends State<TastingSummary> {
                       details: _detailsController.text,
                       flight: _flightController.text,
                       numberOfWines: numberOfWines,
-                      wineType: _wineTypeController.text.isEmpty ? null : _wineTypeController.text,
-                      grapes: _grapesController.text.isEmpty ? null : _grapesController.text,
-                      country: _countryController.text.isEmpty ? null : _countryController.text,
-                      region: _regionController.text.isEmpty ? null : _regionController.text,
-                      producer: _producerController.text.isEmpty ? null : _producerController.text,
-                      year: _yearController.text.isEmpty ? null : _yearController.text,
-                      wines: _selectedTasting?.wines ?? wines, // Use existing wines or create new ones
+                      wineType:
+                          _wineTypeController.text.isEmpty
+                              ? null
+                              : _wineTypeController.text,
+                      grapes:
+                          _grapesController.text.isEmpty
+                              ? null
+                              : _grapesController.text,
+                      country:
+                          _countryController.text.isEmpty
+                              ? null
+                              : _countryController.text,
+                      region:
+                          _regionController.text.isEmpty
+                              ? null
+                              : _regionController.text,
+                      producer:
+                          _producerController.text.isEmpty
+                              ? null
+                              : _producerController.text,
+                      year:
+                          _yearController.text.isEmpty
+                              ? null
+                              : _yearController.text,
+                      wines:
+                          _selectedTasting?.wines ??
+                          wines, // Use existing wines or create new ones
                       isRevealed: _selectedTasting?.isRevealed ?? false,
                     );
 
@@ -190,23 +226,25 @@ class _TastingSummaryState extends State<TastingSummary> {
                       // Add more wines if needed
                       final additionalWines = List<Wine>.generate(
                         numberOfWines - tasting.wines.length,
-                        (index) => Wine(wineNumber: tasting.wines.length + index + 1),
+                        (index) =>
+                            Wine(wineNumber: tasting.wines.length + index + 1),
                       );
                       tasting.wines.addAll(additionalWines);
                     }
 
                     // Save the tasting
-                    print('[TastingSummary] Saving tasting to storage');
                     await StorageProvider.instance.saveTasting(tasting);
-                    print('[TastingSummary] Tasting saved: ${tasting.id} with ${tasting.wines.length} wines and is Revealed: ${tasting.isRevealed}');
 
                     if (mounted) {
-                      print('[TastingSummary] Navigating to WineDeckPage');
                       Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => WineDeckPage(tasting: tasting, currentCard: 0),
-                                  ),
-                                );
+                        MaterialPageRoute(
+                          builder:
+                              (context) => WineDeckPage(
+                                tasting: tasting,
+                                currentCard: 0,
+                              ),
+                        ),
+                      );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -219,7 +257,7 @@ class _TastingSummaryState extends State<TastingSummary> {
               icon: const Icon(Icons.edit_note),
             ),
           ),
-          if (_isEditing && _savedTastings.isNotEmpty) ...[   
+          if (_isEditing && _savedTastings.isNotEmpty) ...[
             FloatingActionButton.extended(
               heroTag: 'savedTastings',
               onPressed: () {
@@ -230,7 +268,7 @@ class _TastingSummaryState extends State<TastingSummary> {
               label: const Text('Saved tastings'),
               icon: _buildTastingIcon(),
             ),
-          ]
+          ],
         ],
       ),
       appBar: AppBar(
@@ -252,380 +290,85 @@ class _TastingSummaryState extends State<TastingSummary> {
               const SizedBox(height: 16),
             ],
             Expanded(
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Tasting Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a tasting name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _dateController,
-                        decoration: const InputDecoration(
-                          labelText: 'Date (YYYY-MM-DD)',
-                          border: OutlineInputBorder(),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a date';
-                          }
-                          // Add date format validation if needed
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      TextFormField(
-                        controller: _flightController,
-                        decoration: const InputDecoration(
-                          labelText: 'Flight',
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter the flight name or number',
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      TextFormField(
-                        controller: _numberOfWinesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Number of Wines',
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter the number of wines in this tasting',
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return null;  // Optional field
-                          }
-                          final number = int.tryParse(value);
-
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _detailsController,
-                        decoration: const InputDecoration(
-                          labelText: 'Details',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                        onTap: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      ExpansionTile(
-                        title: const Text('Set wine parameters'),
-                        initiallyExpanded: _isWineParametersExpanded,
-                        onExpansionChanged: (expanded) {
-                          setState(() {
-                            _isWineParametersExpanded = expanded;
-                          });
-                        },
-                        children: [
-                          TextFormField(
-                            controller: _wineTypeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Type',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., Red, White, Rosé',
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
-
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _grapesController,
-                            decoration: const InputDecoration(
-                              labelText: 'Grape(s)',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., Cabernet Sauvignon, Merlot',
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _countryController,
-                            decoration: const InputDecoration(
-                              labelText: 'Country',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., France, Italy',
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _regionController,
-                            decoration: const InputDecoration(
-                              labelText: 'Region',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., Bordeaux, Tuscany',
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _producerController,
-                            decoration: const InputDecoration(
-                              labelText: 'Producer',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., Château Margaux',
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _yearController,
-                            decoration: const InputDecoration(
-                              labelText: 'Year',
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., 2018',
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Tasting Form Component
+                    TastingForm(
+                      formKey: _formKey,
+                      nameController: _nameController,
+                      dateController: _dateController,
+                      detailsController: _detailsController,
+                      flightController: _flightController,
+                      numberOfWinesController: _numberOfWinesController,
+                      wineTypeController: _wineTypeController,
+                      grapesController: _grapesController,
+                      countryController: _countryController,
+                      regionController: _regionController,
+                      producerController: _producerController,
+                      yearController: _yearController,
+                      onTap: () {
+                        setState(() {
+                          _isEditing = true;
+                        });
+                      },
+                      isWineParametersExpanded: _isWineParametersExpanded,
+                      onWineParametersExpanded: (expanded) {
+                        setState(() {
+                          _isWineParametersExpanded = expanded;
+                        });
+                      },
+                      selectedTasting: _selectedTasting,
                     ),
-                  ),
-                ),
-              ),
-              if (_savedTastings.isNotEmpty && !_isEditing) ...[
-                const Divider(),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          _buildTastingIcon(),
-                          const Text(
-                            'Saved Tastings',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                          if (_selectedTasting != null) ...[   
-                            IconButton(
-                              onPressed: () {
-                                _clearForm();
-                                setState(() {
-                                  _isEditing = true;
-                                });
-                              },
-                              icon: Stack(
-                                children: [
-                                  _buildTastingIcon(),
-                                  Positioned(
-                                    right: 4,
-                                    bottom: -2,
-                                    child: const Icon(Icons.add, size: 14),
-                                  ),
-                                ],
-                              ),
-                              tooltip: 'New Tasting',
-                            ),
-                          ]
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: ListView.builder(
-                          key: const Key('savedTastingsList'),
-                          itemCount: _savedTastings.length,
-                          itemBuilder: (context, index) {
-                            final tasting = _savedTastings[index];
-                            return Card(
-                              key: Key('tastingCard_${tasting.id}'),
-                              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: BorderSide(color: Colors.grey.shade200),
-                              ),
-                              child: ListTile(
-                                key: Key('tastingListTile_${tasting.id}'),
-                                title: Text(
-                                  '${tasting.name} ${tasting.flight?.padLeft(1, ' ') ?? ''}',
-                                  style: const TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                                subtitle: Text(
-                                  '${tasting.date} (${tasting.wines.length}) ${tasting.producer?.padLeft(1, ' - ') ?? ''} ${tasting.country?.padLeft(1, ' - ') ?? ''} ${tasting.region?.padLeft(1, ' - ') ?? ''} ${tasting.year?.padLeft(1, ' - ') ?? ''} ${tasting.wineType?.padLeft(1, ' - ') ?? ''} ${tasting.grapes?.padLeft(1, ' - ') ?? ''}',
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete_outline),
-                                  onPressed: () async {
-                                    final confirmed = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: const Text('Delete Tasting'),
-                                        content: Text('Are you sure you want to delete "${tasting.name}"?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(false),
-                                            child: const Text('CANCEL'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(true),
-                                            child: const Text('DELETE'),
-                                          ),
-                                        ],
-                                      ),
-                                    ) ?? false;
 
-                                    if (confirmed) {
-                                      await StorageProvider.instance.deleteTasting(tasting.id);
-                                      setState(() {
-                                        _savedTastings.removeWhere((t) => t.name == tasting.name);
-                                        if (_selectedTasting?.name == tasting.name) {
-                                          _selectedTasting = null;
-                                        }
-                                      });
-                                    }
-                                  },
-                                ),
-                                onTap: () {
+                    const SizedBox(height: 24),
+
+                    // Saved Tastings List Component (if not in editing mode)
+                    if (!_isEditing && _savedTastings.isNotEmpty) ...[
+                      SavedTastingsList(
+                        savedTastings: _savedTastings,
+                        selectedTasting: _selectedTasting,
+                        onTastingSelected: (tasting) {
                           setState(() {
                             _nameController.text = tasting.name;
                             _dateController.text = tasting.date;
                             _detailsController.text = tasting.details;
+                            _flightController.text = tasting.flight ?? '';
+                            _numberOfWinesController.text =
+                                tasting.numberOfWines?.toString() ?? '';
+                            _wineTypeController.text = tasting.wineType ?? '';
+                            _grapesController.text = tasting.grapes ?? '';
+                            _countryController.text = tasting.country ?? '';
+                            _regionController.text = tasting.region ?? '';
+                            _producerController.text = tasting.producer ?? '';
+                            _yearController.text = tasting.year ?? '';
                             _selectedTasting = tasting;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                          });
+                        },
+                        onNewTasting: _clearForm,
+                        onEditingEnabled: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
                       ),
-                      if (_selectedTasting != null && _selectedTasting!.wines.isNotEmpty) ...[
-                        const SizedBox(height: 14),
-                        Row (
-                          children: [
-                            const Icon(Icons.wine_bar, size: 18),
-                            const Text(
-                              'Wines',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          height: 150,
-                          child: ListView.builder(
-                            key: const Key('winesList'),
-                            itemCount: _selectedTasting!.wines.length,
-                            itemBuilder: (context, index) {
-                              final wine = _selectedTasting!.wines[index];
-                              return ListTile(
-                                key: Key('wineListTile_${wine.wineNumber}'),
-                                dense: true,
-                                visualDensity: VisualDensity.compact,
-                                minLeadingWidth: 20,
-                                title: Text(
-                                  '${wine.wineNumber} [${wine.rating}] ${wine.name} ${wine.producer?.padLeft(1, ' - ') ?? ''} ${wine.country?.padLeft(1, ' - ') ?? ''} ${wine.region?.padLeft(1, ' - ') ?? ''} ${wine.year?.padLeft(1, ' - ') ?? ''} ${wine.wineType?.padLeft(1, ' - ') ?? ''} ${wine.grapes?.padLeft(1, ' - ') ?? ''}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                                onTap: () {
-                                  //TODO navigate to wine card
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => WineDeckPage(
-                                        tasting: _selectedTasting!,
-                                        currentCard: wine.wineNumber-1,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ]
                     ],
-                  ),
+                    const SizedBox(height: 24),
+                    // Wines List Component (if a tasting is selected)
+                    if (_selectedTasting != null &&
+                        _selectedTasting!.wines.isNotEmpty) ...[
+                      WinesList(
+                        tasting: _selectedTasting!,
+                        isEditing: _isEditing,
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ],
                 ),
-              ],
-            ],
+              ),
+            ),
+          ],
         ),
       ),
     );
