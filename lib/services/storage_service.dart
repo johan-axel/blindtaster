@@ -102,7 +102,6 @@ class HiveStorageService implements StorageService {
     }
 
     final settings = _settingsBox!.get('user_settings') ?? Settings();
-    _settingsController.add(settings);
     return settings;
   }
 
