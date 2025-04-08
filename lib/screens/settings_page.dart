@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/settings.dart';
 import '../services/storage_provider.dart';
+import '../services/export_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -16,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   Future<void> _exportTastingsToCSV() async {
     try {
-      final csv = StorageProvider.instance.exportTastingsToCSV();
+      final csv = ExportService.instance.exportTastingsToCSV();
       final bytes = utf8.encode(csv);
       
       // Get temporary directory

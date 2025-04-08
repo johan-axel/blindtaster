@@ -42,10 +42,6 @@ class MockStorageService implements StorageService {
     await _settingsController.close();
   }
 
-  @override
-  String exportTastingsToCSV() {
-    return 'Mock CSV export';
-  }
 
   @override
   Settings getSettings() {
