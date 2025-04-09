@@ -62,6 +62,9 @@ class Settings extends HiveObject {
   @HiveField(15)
   bool showComments;
 
+  @HiveField(20)
+  bool newSettings;
+
   @HiveField(19)
   List<CustomField> customFields;
 
@@ -85,6 +88,7 @@ class Settings extends HiveObject {
     this.showCharacteristics = true,
     this.showRating = true,
     this.showComments = true,
+    this.newSettings = true,
     List<CustomField>? customFields,
   }) : customFields = customFields ?? [];
 }

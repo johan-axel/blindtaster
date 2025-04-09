@@ -109,8 +109,8 @@ class HiveStorageService implements StorageService {
       throw Exception('Storage not initialized');
     }
 
-    final settings = _settingsBox!.get('user_settings') ?? Settings();
-    return settings;
+    final settings = _settingsBox!.get('user_settings');
+    return settings ?? Settings();
   }
 
   @override
@@ -141,6 +141,8 @@ class HiveStorageService implements StorageService {
       }
     }
 
+    // Update newSettings flag
+    settings.newSettings = false;
     await _settingsBox!.put('user_settings', settings);
     _settingsController.add(settings);
   }

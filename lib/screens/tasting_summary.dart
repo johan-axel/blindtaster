@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/tasting.dart';
 import '../models/wine.dart';
+import '../models/settings.dart';
 import '../services/storage_provider.dart';
 import '../widgets/tasting_form.dart';
 import '../widgets/saved_tastings_list.dart';
@@ -40,6 +41,7 @@ class _TastingSummaryState extends State<TastingSummary> {
   void initState() {
     super.initState();
     _loadSavedTastings();
+    _checkSettings();
     _selectedTasting = widget.initialTasting;
 
     // Initialize controllers with values from initialTasting if available
@@ -94,6 +96,38 @@ class _TastingSummaryState extends State<TastingSummary> {
     _producerController.dispose();
     _yearController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkSettings() async {
+    final settings = await StorageProvider.instance.getSettings();
+    if (settings.newSettings) {
+      // Show welcome dialog after a short delay to ensure the widget is mounted
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Text('Welcome to Blind Taster'),
+            content: const Text("Let's set your preferences for your tastings first."),
+            actions: [
+              TextButton(
+                child: const Text('Get Started'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      });
+    }
   }
 
   Future<void> _loadSavedTastings() async {
