@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../models/tasting.dart';
 import '../models/wine.dart';
 import '../models/settings.dart';
+import '../models/custom_field.dart';
 
 abstract class StorageService {
 
@@ -59,6 +60,14 @@ class HiveStorageService implements StorageService {
     if (!Hive.isAdapterRegistered(3)) {
       print('[StorageService] Registering SettingsAdapter');
       Hive.registerAdapter(SettingsAdapter());
+    }
+    if (!Hive.isAdapterRegistered(5)) {
+      print('[StorageService] Registering CustomFieldTypeAdapter');
+      Hive.registerAdapter(CustomFieldTypeAdapter());
+    }
+    if (!Hive.isAdapterRegistered(6)) {
+      print('[StorageService] Registering CustomFieldAdapter');
+      Hive.registerAdapter(CustomFieldAdapter());
     }
     
     // Open the boxes

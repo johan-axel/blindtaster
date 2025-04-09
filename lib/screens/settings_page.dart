@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../models/settings.dart';
 import '../services/storage_provider.dart';
 import '../services/export_service.dart';
+import '../widgets/custom_fields_settings.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -279,6 +280,24 @@ class _SettingsPageState extends State<SettingsPage> {
                                   },
                                 ),
                               ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ExpansionTile(
+                        title: const Text(
+                          'Custom Fields',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        initiallyExpanded: false,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: CustomFieldsSettings(
+                              settings: settings,
+                              onSettingsChanged: () {
+                                StorageProvider.instance.saveSettings(settings);
+                              },
                             ),
                           ),
                         ],

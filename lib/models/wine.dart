@@ -72,6 +72,9 @@ class Wine extends HiveObject {
   @HiveField(21)
   double? aftertasteQuality;
 
+  @HiveField(22)
+  Map<String, dynamic> customFieldValues = {};
+
   factory Wine({
     required int wineNumber,
     String name = '',
@@ -95,6 +98,7 @@ class Wine extends HiveObject {
     double? smellQuality,
     double? tasteQuality,
     double? aftertasteQuality,
+    Map<String, dynamic>? customFieldValues,
   }) {
     final settings = StorageProvider.instance.getSettings();
     
@@ -121,6 +125,7 @@ class Wine extends HiveObject {
       smellQuality: smellQuality,
       tasteQuality: tasteQuality,
       aftertasteQuality: aftertasteQuality,
+      customFieldValues: customFieldValues ?? {},
     );
   }
 
@@ -147,7 +152,10 @@ class Wine extends HiveObject {
     this.smellQuality,
     this.tasteQuality,
     this.aftertasteQuality,
-  });
+    Map<String, dynamic>? customFieldValues,
+  }) {
+    this.customFieldValues = customFieldValues ?? {};
+  }
 
   /// Recalculates all ratings (overall, smell, taste, aftertaste) based on new min/max values
   void recalculateRatings(double oldMin, double oldMax, double newMin, double newMax) {

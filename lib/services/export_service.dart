@@ -1,4 +1,5 @@
 import '../models/tasting.dart';
+import '../models/custom_field.dart';
 import 'storage_provider.dart';
 
 class ExportService {
@@ -9,10 +10,41 @@ class ExportService {
   String exportTastingsToCSV() {
     final StringBuffer csv = StringBuffer();
     
-    // Header row
-    csv.writeln('Tasting Name,Tasting Date,Flight,Wine Number,Wine Type,Grapes,Country,Region,Producer,Year,' +
-                'Color,Smell,Smell Quality,Taste,Taste Quality,Aftertaste,Aftertaste Quality,' +
-                'Acidity,Body,Fruit,Sweetness,Tannins,Overall Rating,Comments');
+    // Get settings to know what custom fields to include
+    final settings = StorageProvider.instance.getSettings();
+
+    // Build header row
+    final headers = [
+      'Tasting Name',
+      'Tasting Date',
+      'Flight',
+      'Wine Number',
+      'Wine Type',
+      'Grapes',
+      'Country',
+      'Region',
+      'Producer',
+      'Year',
+      'Color',
+      'Smell',
+      'Smell Quality',
+      'Taste',
+      'Taste Quality',
+      'Aftertaste',
+      'Aftertaste Quality',
+      'Acidity',
+      'Body',
+      'Fruit',
+      'Sweetness',
+      'Tannins',
+      'Overall Rating',
+      'Comments',
+      // Add custom field headers
+      ...settings.customFields.map((f) => f.name),
+    ];
+
+    // Write header row
+    csv.writeln(headers.join(','));
 
     // Get all tastings from storage
     final tastings = StorageProvider.instance.getAllTastings();
@@ -44,7 +76,12 @@ class ExportService {
           '${wine.sweetness},' +
           '${wine.tannins},' +
           '${wine.rating},' +
-          '${_escapeCSV(wine.comments)}'
+          '${_escapeCSV(wine.comments)},' +
+          // Add custom field values
+          settings.customFields.map((field) {
+            final value = wine.customFieldValues[field.name];
+            return _escapeCSV(value?.toString() ?? '');
+          }).join(',')
         );
       }
     }

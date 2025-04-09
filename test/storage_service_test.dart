@@ -5,6 +5,7 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 import 'package:wine_taster/models/settings.dart';
 import 'package:wine_taster/models/tasting.dart';
 import 'package:wine_taster/models/wine.dart';
+import 'package:wine_taster/models/custom_field.dart';
 import 'package:wine_taster/services/storage_provider.dart';
 import 'package:wine_taster/services/storage_service.dart';
 
@@ -24,6 +25,8 @@ void main() {
     if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(WineAdapter());
     if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(TastingAdapter());
     if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(SettingsAdapter());
+    if (!Hive.isAdapterRegistered(5)) Hive.registerAdapter(CustomFieldTypeAdapter());
+    if (!Hive.isAdapterRegistered(6)) Hive.registerAdapter(CustomFieldAdapter());
     
     // Open test boxes in memory
     settingsBox = await Hive.openBox<Settings>('settings_test', bytes: Uint8List(0));
@@ -44,7 +47,11 @@ void main() {
   group('Rating Range Changes', () {
     test('wine ratings stay within new min-max range after settings change', () async {
       // Create initial settings with range 1-5
-      final initialSettings = Settings(minRating: 1.0, maxRating: 5.0);
+      final initialSettings = Settings(
+        minRating: 1.0,
+        maxRating: 5.0,
+        customFields: [],
+      );
       await storageService.saveSettings(initialSettings);
 
       // Create a tasting with wines having various ratings
@@ -73,7 +80,11 @@ void main() {
       await storageService.saveTasting(tasting);
 
       // Change settings to range 10-20
-      final newSettings = Settings(minRating: 10.0, maxRating: 20.0);
+      final newSettings = Settings(
+        minRating: 10.0,
+        maxRating: 20.0,
+        customFields: [],
+      );
       await storageService.saveSettings(newSettings);
 
       // Get updated tasting

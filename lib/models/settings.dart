@@ -1,17 +1,18 @@
 import 'package:hive/hive.dart';
+import 'custom_field.dart';
 
 part 'settings.g.dart';
 
 @HiveType(typeId: 3)
 class Settings extends HiveObject {
   @HiveField(16)
-  double? minRating;
+  double minRating;
 
   @HiveField(17)
-  double? maxRating;
+  double maxRating;
 
   @HiveField(18)
-  int? ratingSteps;
+  int ratingSteps;
 
   @HiveField(0)
   bool showWineType;
@@ -61,6 +62,9 @@ class Settings extends HiveObject {
   @HiveField(15)
   bool showComments;
 
+  @HiveField(19)
+  List<CustomField> customFields;
+
   Settings({
     this.minRating = 1.0,
     this.maxRating = 5.0,
@@ -81,5 +85,6 @@ class Settings extends HiveObject {
     this.showCharacteristics = true,
     this.showRating = true,
     this.showComments = true,
-  });
+    List<CustomField>? customFields,
+  }) : customFields = customFields ?? [];
 }

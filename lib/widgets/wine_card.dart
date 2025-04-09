@@ -3,6 +3,7 @@ import 'dart:async';
 import '../models/wine.dart';
 import '../models/tasting.dart';
 import '../models/settings.dart';
+import '../models/custom_field.dart';
 import '../services/storage_provider.dart';
 
 class WineCard extends StatefulWidget {
@@ -302,15 +303,89 @@ class _WineCardState extends State<WineCard> {
                 _onFieldChanged();
               }, true),
             ],
+            if (_settings.customFields.isNotEmpty) ...[  
+              const SizedBox(height: 24),
+              const Text(
+                'Custom Fields',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              ..._settings.customFields.map((field) {
+                final value = widget.wine.customFieldValues[field.name];
+                switch (field.type) {
+                  case CustomFieldType.text:
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TextFormField(
+                        initialValue: value?.toString() ?? '',
+                        decoration: InputDecoration(
+                          labelText: field.name,
+                          border: const OutlineInputBorder(),
+                        ),
+                        onChanged: (newValue) {
+                          setState(() {
+                            widget.wine.customFieldValues[field.name] = newValue;
+                          });
+                          _onFieldChanged();
+                        },
+                      ),
+                    );
+                  case CustomFieldType.number:
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TextFormField(
+                        initialValue: value?.toString() ?? '',
+                        decoration: InputDecoration(
+                          labelText: field.name,
+                          border: const OutlineInputBorder(),
+                          helperText: 'Range: ${field.minValue} - ${field.maxValue}',
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (newValue) {
+                          final number = double.tryParse(newValue);
+                          if (number != null) {
+                            setState(() {
+                              widget.wine.customFieldValues[field.name] = number;
+                            });
+                            _onFieldChanged();
+                          }
+                        },
+                      ),
+                    );
+                  case CustomFieldType.slider:
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _buildSlider(
+                        field.name,
+                        (value as num?)?.toDouble(),
+                        (newValue) {
+                          setState(() {
+                            widget.wine.customFieldValues[field.name] = newValue;
+                          });
+                          _onFieldChanged();
+                        },
+                        false,
+                        min: field.minValue!,
+                        max: field.maxValue!,
+                        divisions: field.divisions!,
+                      ),
+                    );
+                }
+              }),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSlider(String label, double? value, ValueChanged<double> onChanged, bool useSettings) {
+  Widget _buildSlider(String label, double? value, ValueChanged<double> onChanged, bool useSettings, {
+    double? min,
+    double? max,
+    int? divisions,
+  }) {
     // If value is null or 0, use the minimum rating from settings
-    final effectiveValue = (value ?? 0) <= 0 && useSettings ? _settings.minRating! : value!;
+    final effectiveValue = (value ?? 0) <= 0 && useSettings ? _settings.minRating! : value ?? (min ?? 0);
     
     return Row(
       children: [
@@ -321,9 +396,9 @@ class _WineCardState extends State<WineCard> {
         Expanded(
           child: Slider(
             value: effectiveValue,
-            min: useSettings ? _settings.minRating! : 0,
-            max: useSettings ? _settings.maxRating! : 5,
-            divisions: useSettings ? _settings.ratingSteps! : 5,
+            min: useSettings ? _settings.minRating! : (min ?? 0),
+            max: useSettings ? _settings.maxRating! : (max ?? 5),
+            divisions: useSettings ? _settings.ratingSteps! : (divisions ?? 5),
             label: effectiveValue.toStringAsFixed(1),
             onChanged: (newValue) {
               // If the value was null or 0, update it immediately
