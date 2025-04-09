@@ -235,42 +235,6 @@ class _WineCardState extends State<WineCard> {
                 _onFieldChanged();
               }, true),
             ],
-            const SizedBox(height: 16),
-            if (_settings.showAftertaste) ...[  
-              TextFormField(
-                initialValue: widget.wine.aftertaste,
-                decoration: const InputDecoration(
-                  labelText: 'Aftertaste',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-                onChanged: (value) {
-                  widget.wine.aftertaste = value;
-                  _onFieldChanged();
-                },
-              ),
-            ],
-            if (_settings.showAftertasteQuality) ...[  
-              _buildSlider('Aftertaste Quality', widget.wine.aftertasteQuality, (value) {
-                setState(() => widget.wine.aftertasteQuality = value);
-                _onFieldChanged();
-              }, true),
-            ],
-            const SizedBox(height: 16),
-            if (_settings.showComments) ...[  
-              TextFormField(
-                initialValue: widget.wine.comments,
-                decoration: const InputDecoration(
-                  labelText: 'Comments',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                onChanged: (value) {
-                  widget.wine.comments = value;
-                  _onFieldChanged();
-                },
-              ),
-            ],
             if (_settings.showCharacteristics) ...[  
               const SizedBox(height: 24),
               const Text('Characteristics', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -295,6 +259,42 @@ class _WineCardState extends State<WineCard> {
                   setState(() => widget.wine.tannins = value);
                   _onFieldChanged();
                 }, false),
+            ],
+            if (_settings.showAftertaste) ...[  
+              TextFormField(
+                initialValue: widget.wine.aftertaste,
+                decoration: const InputDecoration(
+                  labelText: 'Aftertaste',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 2,
+                onChanged: (value) {
+                  widget.wine.aftertaste = value;
+                  _onFieldChanged();
+                },
+              ),
+            ],
+            const SizedBox(height: 16),
+            if (_settings.showAftertasteQuality) ...[  
+              _buildSlider('Aftertaste Quality', widget.wine.aftertasteQuality, (value) {
+                setState(() => widget.wine.aftertasteQuality = value);
+                _onFieldChanged();
+              }, true),
+            ],
+            const SizedBox(height: 16),
+            if (_settings.showComments) ...[  
+              TextFormField(
+                initialValue: widget.wine.comments,
+                decoration: const InputDecoration(
+                  labelText: 'Comments',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                onChanged: (value) {
+                  widget.wine.comments = value;
+                  _onFieldChanged();
+                },
+              ),
             ],
             if (_settings.showRating) ...[  
               _buildSlider('Overall Rating', widget.wine.rating, (value) {
