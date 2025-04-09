@@ -92,9 +92,9 @@ class Wine extends HiveObject {
     double sweetness = 0.0,
     double tannins = 0.0,
     double? rating,
-    double? smellQuality = 3.0,
-    double? tasteQuality = 3.0,
-    double? aftertasteQuality = 3.0,
+    double? smellQuality,
+    double? tasteQuality,
+    double? aftertasteQuality,
   }) {
     final settings = StorageProvider.instance.getSettings();
     
@@ -148,4 +148,30 @@ class Wine extends HiveObject {
     this.tasteQuality,
     this.aftertasteQuality,
   });
+
+  /// Recalculates all ratings (overall, smell, taste, aftertaste) based on new min/max values
+  void recalculateRatings(double oldMin, double oldMax, double newMin, double newMax) {
+    if (oldMin == oldMax) return; // Avoid division by zero
+    
+    // Helper function to recalculate a single rating value
+    double recalculate(double value) {
+      final percentage = (value - oldMin) / (oldMax - oldMin);
+      return newMin + (percentage * (newMax - newMin));
+    }
+
+    // Recalculate main rating
+    rating = recalculate(rating);
+
+    // Recalculate quality ratings if they exist
+    if (smellQuality != null) smellQuality = recalculate(smellQuality!);
+    if (tasteQuality != null) tasteQuality = recalculate(tasteQuality!);
+    if (aftertasteQuality != null) aftertasteQuality = recalculate(aftertasteQuality!);
+
+    // Recalculate characteristics
+    acidity = recalculate(acidity);
+    body = recalculate(body);
+    fruit = recalculate(fruit);
+    sweetness = recalculate(sweetness);
+    tannins = recalculate(tannins);
+  }
 }

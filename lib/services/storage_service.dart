@@ -110,6 +110,28 @@ class HiveStorageService implements StorageService {
       throw Exception('Storage not initialized');
     }
 
+    // Get current settings to check for rating range changes
+    final currentSettings = getSettings();
+    final hasRatingRangeChanged = 
+      currentSettings.minRating != settings.minRating ||
+      currentSettings.maxRating != settings.maxRating;
+
+    // If rating range changed, update all wine ratings
+    if (hasRatingRangeChanged) {
+      final tastings = getAllTastings();
+      for (final tasting in tastings) {
+        for (final wine in tasting.wines) {
+          wine.recalculateRatings(
+            currentSettings.minRating!,
+            currentSettings.maxRating!,
+            settings.minRating!,
+            settings.maxRating!
+          );
+        }
+        await saveTasting(tasting);
+      }
+    }
+
     await _settingsBox!.put('user_settings', settings);
     _settingsController.add(settings);
   }
@@ -126,6 +148,8 @@ class HiveStorageService implements StorageService {
   @override
   Future<void> dispose() async {
     await _settingsController.close();
+    await _settingsBox?.close();
+    await _tastingBox?.close();
   }
 
 

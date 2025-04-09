@@ -184,13 +184,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                           border: OutlineInputBorder(),
                                         ),
                                         keyboardType: TextInputType.number,
-                                        onChanged: (value) {
+                                        onChanged: (value) async {
                                           final newValue = double.tryParse(value);
                                           if (newValue != null) {
-                                            setState(() {
-                                              settings.minRating = newValue;
-                                              StorageProvider.instance.saveSettings(settings);
-                                            });
+                                            final confirmed = await showDialog<bool>(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: const Text('Update Rating Range'),
+                                                content: const Text('Changing the rating range will recalculate all existing wine ratings. Do you want to continue?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.of(context).pop(false),
+                                                    child: const Text('CANCEL'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () => Navigator.of(context).pop(true),
+                                                    child: const Text('UPDATE'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ) ?? false;
+
+                                            if (confirmed) {
+                                              setState(() {
+                                                settings.minRating = newValue;
+                                                StorageProvider.instance.saveSettings(settings);
+                                              });
+                                            }
                                           }
                                         },
                                       ),
@@ -204,13 +224,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                           border: OutlineInputBorder(),
                                         ),
                                         keyboardType: TextInputType.number,
-                                        onChanged: (value) {
+                                        onChanged: (value) async {
                                           final newValue = double.tryParse(value);
                                           if (newValue != null) {
-                                            setState(() {
-                                              settings.maxRating = newValue;
-                                              StorageProvider.instance.saveSettings(settings);
-                                            });
+                                            final confirmed = await showDialog<bool>(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: const Text('Update Rating Range'),
+                                                content: const Text('Changing the rating range will recalculate all existing wine ratings. Do you want to continue?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.of(context).pop(false),
+                                                    child: const Text('CANCEL'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () => Navigator.of(context).pop(true),
+                                                    child: const Text('UPDATE'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ) ?? false;
+
+                                            if (confirmed) {
+                                              setState(() {
+                                                settings.maxRating = newValue;
+                                                StorageProvider.instance.saveSettings(settings);
+                                              });
+                                            }
                                           }
                                         },
                                       ),

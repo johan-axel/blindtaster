@@ -113,6 +113,7 @@ if (widget.currentCard > 0)
                       onPressed: () {
                         setState(() {
                           // Add new wine with next number in sequence
+                          final settings = StorageProvider.instance.getSettings();
                           widget.tasting.wines.add(Wine(
                             wineNumber: _wines.length + 1,
                             wineType: widget.tasting.wineType,
@@ -121,6 +122,16 @@ if (widget.currentCard > 0)
                             region: widget.tasting.region,
                             producer: widget.tasting.producer,
                             year: widget.tasting.year,
+                            // Initialize all rating fields to minimum value
+                            rating: settings.minRating!,
+                            smellQuality: settings.minRating!,
+                            tasteQuality: settings.minRating!,
+                            aftertasteQuality: settings.minRating!,
+                            acidity: settings.minRating!,
+                            sweetness: settings.minRating!,
+                            body: settings.minRating!,
+                            tannins: settings.minRating!,
+                            fruit: settings.minRating!,
                           ));
                           _saveTasting();
 

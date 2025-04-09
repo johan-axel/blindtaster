@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:hive/hive.dart';
 import 'package:wine_taster/services/storage_service.dart';
 import 'package:wine_taster/models/tasting.dart';
 import 'package:wine_taster/models/settings.dart';
@@ -40,6 +41,13 @@ class MockStorageService implements StorageService {
   @override
   Future<void> dispose() async {
     await _settingsController.close();
+    // Close any in-memory boxes if they were created during testing
+    if (Hive.isBoxOpen('settings')) {
+      await Hive.box('settings').close();
+    }
+    if (Hive.isBoxOpen('tastings')) {
+      await Hive.box('tastings').close();
+    }
   }
 
 
