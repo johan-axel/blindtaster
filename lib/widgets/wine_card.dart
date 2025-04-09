@@ -210,30 +210,10 @@ class _WineCardState extends State<WineCard> {
               ),
             ],
             if (_settings.showSmellQuality) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Text('Smell Quality:', style: TextStyle(fontSize: 14)),
-                  Expanded(
-                      child: Slider(
-                        value: widget.wine.smellQuality ?? 3.0,
-                        min: 1.0,
-                        max: 5.0,
-                        divisions: 8,
-                        label: (widget.wine.smellQuality ?? 3.0).toStringAsFixed(1),
-                        onChanged: (value) {
-                          setState(() {
-                            widget.wine.smellQuality = value;
-                          });
-                          _onFieldChanged();
-                        },
-                      ),
-                    ),
-                    Text((widget.wine.smellQuality ?? 3.0).toStringAsFixed(1), 
-                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              const SizedBox(height: 16),
+              _buildSlider('Smell Quality', widget.wine.smellQuality, (value) {
+                setState(() => widget.wine.smellQuality = value);
+                _onFieldChanged();
+              }, true),
             ],
             if (_settings.showTaste) ...[  
               TextFormField(
@@ -250,29 +230,10 @@ class _WineCardState extends State<WineCard> {
               ),
             ],
             if (_settings.showTasteQuality) ...[  
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Text('Taste Quality:', style: TextStyle(fontSize: 14)),
-                    Expanded(
-                      child: Slider(
-                        value: widget.wine.tasteQuality ?? 3.0,
-                        min: 1.0,
-                        max: 5.0,
-                        divisions: 8,
-                        label: (widget.wine.tasteQuality ?? 3.0).toStringAsFixed(1),
-                        onChanged: (value) {
-                          setState(() {
-                            widget.wine.tasteQuality = value;
-                          });
-                          _onFieldChanged();
-                        },
-                      ),
-                    ),
-                    Text((widget.wine.tasteQuality ?? 3.0).toStringAsFixed(1), 
-                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
+              _buildSlider('Taste Quality', widget.wine.tasteQuality, (value) {
+                setState(() => widget.wine.tasteQuality = value);
+                _onFieldChanged();
+              }, true),
             ],
             const SizedBox(height: 16),
             if (_settings.showAftertaste) ...[  
@@ -290,29 +251,10 @@ class _WineCardState extends State<WineCard> {
               ),
             ],
             if (_settings.showAftertasteQuality) ...[  
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Text('Aftertaste Quality:', style: TextStyle(fontSize: 14)),
-                    Expanded(
-                      child: Slider(
-                        value: widget.wine.aftertasteQuality ?? 3.0,
-                        min: 1.0,
-                        max: 5.0,
-                        divisions: 8,
-                        label: (widget.wine.aftertasteQuality ?? 3.0).toStringAsFixed(1),
-                        onChanged: (value) {
-                          setState(() {
-                            widget.wine.aftertasteQuality = value;
-                          });
-                          _onFieldChanged();
-                        },
-                      ),
-                    ),
-                    Text((widget.wine.aftertasteQuality ?? 3.0).toStringAsFixed(1), 
-                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
+              _buildSlider('Aftertaste Quality', widget.wine.aftertasteQuality, (value) {
+                setState(() => widget.wine.aftertasteQuality = value);
+                _onFieldChanged();
+              }, true),
             ],
             const SizedBox(height: 16),
             if (_settings.showComments) ...[  
@@ -336,51 +278,29 @@ class _WineCardState extends State<WineCard> {
                 _buildSlider('Acidity', widget.wine.acidity, (value) {
                   setState(() => widget.wine.acidity = value);
                   _onFieldChanged();
-                }),
+                }, false),
                 _buildSlider('Body', widget.wine.body, (value) {
                   setState(() => widget.wine.body = value);
                   _onFieldChanged();
-                }),
+                }, false),
                 _buildSlider('Fruit', widget.wine.fruit, (value) {
                   setState(() => widget.wine.fruit = value);
                   _onFieldChanged();
-                }),
+                }, false),
                 _buildSlider('Sweetness', widget.wine.sweetness, (value) {
                   setState(() => widget.wine.sweetness = value);
                   _onFieldChanged();
-                }),
+                }, false),
                 _buildSlider('Tannins', widget.wine.tannins, (value) {
                   setState(() => widget.wine.tannins = value);
                   _onFieldChanged();
-                }),
+                }, false),
             ],
             if (_settings.showRating) ...[  
-              const SizedBox(height: 24),
-              const Text('Overall Rating', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Row(
-                children: [
-                  Expanded(
-                    child: Slider(
-                      value: widget.wine.rating,
-                      min: _settings.minRating!,
-                      max: _settings.maxRating!,
-                      divisions: _settings.ratingSteps!,
-                      label: widget.wine.rating.toStringAsFixed(1),
-                      onChanged: (value) {
-                        setState(() => widget.wine.rating = value);
-                        _onFieldChanged();
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    width: 60,
-                    child: Text(
-                      widget.wine.rating.toStringAsFixed(1),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
+              _buildSlider('Overall Rating', widget.wine.rating, (value) {
+                setState(() => widget.wine.rating = value);
+                _onFieldChanged();
+              }, true),
             ],
           ],
         ),
@@ -388,7 +308,10 @@ class _WineCardState extends State<WineCard> {
     );
   }
 
-  Widget _buildSlider(String label, double value, ValueChanged<double> onChanged) {
+  Widget _buildSlider(String label, double? value, ValueChanged<double> onChanged, bool useSettings) {
+    // If value is null or 0, use the minimum rating from settings
+    final effectiveValue = (value ?? 0) <= 0 && useSettings ? _settings.minRating! : value!;
+    
     return Row(
       children: [
         SizedBox(
@@ -397,18 +320,24 @@ class _WineCardState extends State<WineCard> {
         ),
         Expanded(
           child: Slider(
-            value: value,
-            min: 0.0,
-            max: 5.0,
-            divisions: 10,
-            label: value.toStringAsFixed(1),
-            onChanged: onChanged,
+            value: effectiveValue,
+            min: useSettings ? _settings.minRating! : 0,
+            max: useSettings ? _settings.maxRating! : 5,
+            divisions: useSettings ? _settings.ratingSteps! : 5,
+            label: effectiveValue.toStringAsFixed(1),
+            onChanged: (newValue) {
+              // If the value was null or 0, update it immediately
+              if ((value ?? 0) <= 0) {
+                onChanged(effectiveValue);
+              }
+              onChanged(newValue);
+            },
           ),
         ),
         SizedBox(
           width: 60,
           child: Text(
-            value.toStringAsFixed(1),
+            effectiveValue.toStringAsFixed(1),
             style: const TextStyle(fontSize: 16),
           ),
         ),
