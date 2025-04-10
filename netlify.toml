@@ -1,0 +1,20 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  command = '''
+    set -e
+    git clone https://github.com/flutter/flutter.git
+    export PATH="$PWD/flutter/bin:$PATH"
+    flutter doctor
+    flutter config --enable-web
+    flutter pub get
+    dart run build_runner build --delete-conflicting-outputs
+    flutter build web
+    mkdir -p build/web/assets
+    cp -r assets/* build/web/assets/
+    test -f build/web/index.html || (echo "Error: build/web/index.html not found after build" && exit 1)
+  '''
+  publish = "build/web"

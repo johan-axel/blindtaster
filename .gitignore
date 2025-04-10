@@ -39,8 +39,9 @@ migrate_working_dir/
 /ios/
 /linux/
 /macos/
-/web/
 /android/
+/web/icons/
+/web/favicon.png
 pubspec.lock
 analysis_options.yaml
 .metadata
