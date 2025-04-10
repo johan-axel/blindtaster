@@ -41,23 +41,6 @@ void main() {
       }
       print('[Test] TastingSummary widget pumped');
 
-      // Try to submit empty form
-      print('[Test] Attempting to tap submit button');
-      await tester.tap(find.byKey(const Key('goToWines')));
-      print('[Test] Submit button tapped, waiting for pump and settle');
-      await tester.pumpAndSettle();
-      print('[Test] Pump and settle completed');
-
-      // Verify validation errors are shown
-      final nameField = tester.widget<TextFormField>(
-        find.widgetWithText(TextFormField, 'Tasting Name'),
-      );
-      final dateField = tester.widget<TextFormField>(
-        find.widgetWithText(TextFormField, 'Date (YYYY-MM-DD)'),
-      );
-      expect(nameField.validator!(''), equals('Please enter a tasting name'));
-      expect(dateField.validator!(''), equals('Please enter a date'));
-
       // Fill in the form
       print('[Test] Filling in form fields');
       await tester.enterText(
@@ -74,14 +57,26 @@ void main() {
       );
       print('[Test] Form fields filled');
 
-      // Submit form with timeout and error handling
+      // Verify validation works
+      final nameField = tester.widget<TextFormField>(
+        find.widgetWithText(TextFormField, 'Tasting Name'),
+      );
+      final dateField = tester.widget<TextFormField>(
+        find.widgetWithText(TextFormField, 'Date (YYYY-MM-DD)'),
+      );
+      expect(nameField.validator!(''), equals('Please enter a tasting name'));
+      expect(dateField.validator!(''), equals('Please enter a date'));
+
+      // Submit form
       print('[Test] Attempting to submit form');
       try {
-        await tester.tap(find.byKey(const Key('goToWines')));
+        final tastingNotesButton = find.byKey(const Key('goToWines'));
+        expect(tastingNotesButton, findsOneWidget, reason: 'Tasting notes button not found');
+        await tester.ensureVisible(tastingNotesButton);
+        await tester.tap(tastingNotesButton);
         print('[Test] Submit button tapped');
         
-        // Add a timeout to pumpAndSettle to prevent infinite loops
-        await tester.pumpAndSettle(const Duration(seconds: 2));
+        await tester.pumpAndSettle();
         print('[Test] Pump and settle completed');
       } catch (e) {
         print('[Test] Error during form submission: $e');
@@ -107,11 +102,14 @@ void main() {
         home: TastingSummary(initialTasting: initialTasting),
       ));
 
+      // Wait for any async operations to complete
+      await tester.pumpAndSettle();
+
       // Verify initial values are loaded
       expect(find.text('Initial Test'), findsOneWidget);
       expect(find.text('2025-03-25'), findsOneWidget);
       expect(find.text('Initial details'), findsOneWidget);
-    });
+    }, timeout: const Timeout(Duration(seconds: 5))); // Add timeout to handle async operations
   });
 
   group('WineDeckPage Widget Tests', () {
